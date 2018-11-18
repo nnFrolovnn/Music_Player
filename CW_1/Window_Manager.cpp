@@ -1,34 +1,48 @@
 #include "Window_Manager.h"
 
 
-
 Window_Manager::Window_Manager()
 {
-}
 
-
-Window_Manager::~Window_Manager()
-{
 }
 
 LRESULT Window_Manager::MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	int err = 0;
+	char* file;
+	switch (uMsg)
+	{
+	case WM_RBUTTONDOWN:
+		file = OnOpenFile(hWnd);
+		err = bass_manager.StreamCreate(file);
+		bass_manager.StreamPlay();
+		break;
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		break;
+	case WM_PAINT:
+		draw_manager.Draw(hWnd);
+		break;
+	default:
+		break;
+	}
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
+
+
 
 char* Window_Manager::OnOpenFile(HWND hwnd)
 {
 	OPENFILENAME openFileDialog;
 	char szDirect[260];
 	char szFileName[260];
-	BITMAP bm;
 
 	memset(&openFileDialog, 0, sizeof(OPENFILENAME));
 	openFileDialog.hwndOwner = hwnd;
 	openFileDialog.Flags = OFN_EXPLORER;
 	openFileDialog.hInstance = NULL;
-	openFileDialog.lpstrFilter = "*.mp3";
-	openFileDialog.lpstrCustomFilter = (LPSTR)"*.mp3";
+	openFileDialog.lpstrFilter = NULL;
+	openFileDialog.lpstrCustomFilter = NULL;
 	openFileDialog.nFilterIndex = 1;
 	openFileDialog.lpstrFile = szDirect;
 	*(openFileDialog.lpstrFile) = 0;
@@ -45,5 +59,10 @@ char* Window_Manager::OnOpenFile(HWND hwnd)
 	{
 		return NULL;
 	}
-	return openFileDialog.lpstrFile;
+
+	int l = strlen(openFileDialog.lpstrFile);
+	char* n = new char[l];
+	strcpy_s(n, sizeof(char)*l + 2, openFileDialog.lpstrFile);
+	n[l + 1] = '\0';
+	return n;
 }

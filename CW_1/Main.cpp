@@ -1,11 +1,12 @@
 #include <Windows.h>
 #include "CW_Header.h"
-#include "Bass_Manager.h"
+#include "Window_Manager.h"
+
+Window_Manager window_manager = Window_Manager();
 
 LRESULT CALLBACK MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-
-	return DefWindowProc(hWnd, uMsg, wParam, lParam);
+	return window_manager.MainWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
 void RegWNDClassEX(HINSTANCE hInstance)
@@ -21,12 +22,6 @@ void RegWNDClassEX(HINSTANCE hInstance)
 	RegisterClassExA(&wcex);
 }
 
-//sets initial state for all global values
-void Initialize_State()
-{
-
-}
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	RegWNDClassEX(hInstance);
@@ -36,8 +31,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	ShowWindow(hMainWindow, SW_SHOWNORMAL);
 	UpdateWindow(hMainWindow);
-
-	Initialize_State();
 
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0))
