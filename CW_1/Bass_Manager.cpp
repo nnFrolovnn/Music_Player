@@ -12,4 +12,5 @@ Bass_Manager::Bass_Manager()
 
 Bass_Manager::~Bass_Manager()
 {
+	BASS_Free();
 }
