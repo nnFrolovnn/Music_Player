@@ -29,6 +29,17 @@ LRESULT Window_Manager::MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
+BOOL Window_Manager::SetHinstance(HINSTANCE hinst)
+{
+	if (hinst != NULL)
+	{
+		hinstance = hinst;
+		return 1;
+	}
+
+	return 0;
+}
+
 
 
 char* Window_Manager::OnOpenFile(HWND hwnd)

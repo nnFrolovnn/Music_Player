@@ -32,6 +32,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	ShowWindow(hMainWindow, SW_SHOWNORMAL);
 	UpdateWindow(hMainWindow);
 
+	window_manager.SetHinstance(hInstance);
+
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0))
 	{
