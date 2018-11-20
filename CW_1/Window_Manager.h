@@ -8,6 +8,8 @@
 #include "CW_Header.h"
 #include "BitMapImage.h"
 
+#pragma comment (lib, "ComCtl32")
+
 #define TIMER_1 1
 #define IMAGES_COUNT 6
 #define ADD_ONCLICK_X 2

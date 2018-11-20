@@ -37,10 +37,14 @@ LRESULT Window_Manager::MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 		break;
 	case WM_DROPFILES:
 		OnDropFiles(hWnd, wParam);
-		bass_manager.StreamPlay();
 		break;
 	case WM_HSCROLL:
 		//TODO: trackbar 
+		if ((int)((currentTrackTime / trackTime) * 100) - 1 == 1)
+		{
+			int o = 0;
+			o += currentTrackTime;
+		}
 		break;
 	}
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
@@ -116,11 +120,6 @@ void Window_Manager::OnMusicLoad(HWND hwnd)
 {
 	char* file = OpenFile(hwnd);
 	bass_manager.AddFileNameToList(file);
-	trackTime = bass_manager.GetStreamTime();
-	currentTrackTime = 0;
-
-	bass_manager.StreamPlay();
-	SetTimer(hwnd, TIMER_1, 1000, NULL);
 }
 
 void Window_Manager::OnCreate(HWND hwnd)
@@ -132,13 +131,12 @@ void Window_Manager::OnCreate(HWND hwnd)
 	
 	images = new BitMapImage[IMAGES_COUNT];
 
-	images[0] =  BitMapImage(5, CW_IMAGE_MENU_TOP, CW_IMAGE_PLAYLIST_PATH);
-	images[1] =  BitMapImage(170, CW_IMAGE_MENU_TOP, CW_IMAGE_REWIND_PATH);
-	images[2] =  BitMapImage(225, CW_IMAGE_MENU_TOP, CW_IMAGE_PLAY_PATH);
-	images[3] =  BitMapImage(280, CW_IMAGE_MENU_TOP, CW_IMAGE_FORWARD_PATH);
-	images[4] =  BitMapImage(335, CW_IMAGE_MENU_TOP, CW_IMAGE_STOP_PATH);
-	images[5] =  BitMapImage(225, CW_IMAGE_MENU_TOP, CW_IMAGE_RESUME_PATH);
-
+	images[0] =  BitMapImage(CW_NUMBER_PLAY_LIST_BUTTON, 5, CW_IMAGE_MENU_TOP, CW_IMAGE_PLAYLIST_PATH);
+	images[1] =  BitMapImage(CW_NUMBER_REWIND_BUTTON, 170, CW_IMAGE_MENU_TOP, CW_IMAGE_REWIND_PATH);
+	images[2] =  BitMapImage(CW_NUMBER_PLAY_BUTTON, 225, CW_IMAGE_MENU_TOP, CW_IMAGE_PLAY_PATH);
+	images[3] =  BitMapImage(CW_NUMBER_FAST_F_BUTTON, 280, CW_IMAGE_MENU_TOP, CW_IMAGE_FORWARD_PATH);
+	images[4] =  BitMapImage(CW_NUMBER_STOP_BUTTON, 335, CW_IMAGE_MENU_TOP, CW_IMAGE_STOP_PATH);
+	images[5] =  BitMapImage(CW_NUMBER_RESUME_BUTTON, 225, CW_IMAGE_MENU_TOP, CW_IMAGE_RESUME_PATH);
 	
 	images[5].SetVisible(FALSE);
 }
@@ -170,7 +168,7 @@ void Window_Manager::OnLButtonDown(HWND hwnd, LPARAM lParam)
 	{
 		int left = images[i].GetLeft();
 		
-		if (left + 5 <= point.x && left + images[i].GetWidth() - 5 >= point.x)
+		if (left + 5 <= point.x && left + images[i].GetWidth() - 5 >= point.x && images[i].IsVisible())
 		{
 			int top = images[i].GetTop();
 			if (top + 5 <= point.y && top + images[i].GetHeight() - 5 >= point.y)
@@ -193,6 +191,44 @@ void Window_Manager::OnLButtonUp(HWND hwnd, LPARAM lParam)
 	if (selectedImage != NULL)
 	{
 		selectedImage->Move(-ADD_ONCLICK_X, -ADD_ONCLICK_Y);
+
+		switch (selectedImage->GetNumber())
+		{
+		case CW_NUMBER_PLAY_LIST_BUTTON:
+
+			break;
+		case CW_NUMBER_REWIND_BUTTON:
+
+			break;
+		case CW_NUMBER_PLAY_BUTTON:
+			bass_manager.StreamPlay();
+			selectedImage->SetVisible(FALSE);
+			images[5].SetVisible(TRUE);
+		
+			currentTrackTime = 0;
+			trackTime = bass_manager.GetStreamTime();
+			SetTimer(hwnd, TIMER_1, 1000, NULL);
+			break;
+		case CW_NUMBER_FAST_F_BUTTON:
+
+			break;
+		case CW_NUMBER_STOP_BUTTON:
+			bass_manager.StreamStop();
+
+			KillTimer(hwnd, TIMER_1);
+			SendMessage(trackBar, TBM_SETPOS, TRUE, 0);
+			currentTrackTime = 0;
+			trackTime = 0;
+			break;
+		case CW_NUMBER_RESUME_BUTTON:
+			KillTimer(hwnd, TIMER_1);
+
+			bass_manager.StreamPlay();
+			selectedImage->SetVisible(FALSE);
+			images[2].SetVisible(TRUE);
+			break;
+		}
+
 		selectedImage = NULL;
 		InvalidateRect(hwnd, NULL, true);
 	}
@@ -243,7 +279,7 @@ HWND WINAPI Window_Manager::CreateTrackbar(HWND hwndDlg, UINT iMin, UINT iMax)
 	HWND hwndTrack = CreateWindowEx(
 		0, TRACKBAR_CLASS, "Trackbar Control",
 		WS_CHILD, CW_TRACKBAR_X, CW_TRACKBAR_Y,
-		CW_TRACKBAR_WIDTH, CW_TRACKBAR_HEIGHT, hwndDlg, 0, hinstance, NULL);
+		CW_TRACKBAR_WIDTH, CW_TRACKBAR_HEIGHT, hwndDlg, (HMENU)1010, hinstance, NULL);
 
 	SendMessage(hwndTrack, TBM_SETRANGE,
 		(WPARAM)TRUE,

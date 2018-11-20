@@ -29,7 +29,7 @@ BitMapImage::BitMapImage(const char* path)
 	LoadBitMapImage(path);
 }
 
-BitMapImage::BitMapImage(UINT numb, int nx, int ny, const char* path) :BitMapImage( path)
+BitMapImage::BitMapImage(UINT numb, int nx, int ny, const char* path) :BitMapImage(path)
 {
 	x = nx;
 	y = ny;
