@@ -5,6 +5,8 @@ Window_Manager::Window_Manager()
 	trackBar = NULL;
 	trackTime = 0;
 	currentTrackTime = 0;
+	images = NULL;
+	selectedImage = NULL;
 }
 
 LRESULT Window_Manager::MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -17,24 +19,28 @@ LRESULT Window_Manager::MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 	case WM_RBUTTONDOWN:
 		OnMusicLoad(hWnd);
 		break;
+	case WM_LBUTTONDOWN:
+		OnLButtonDown(hWnd, lParam);
+		break;
 	case WM_LBUTTONUP:
-		bass_manager.StreamPlay();
+		OnLButtonUp(hWnd, lParam);
 		break;
 	case WM_DESTROY:
 		KillTimer(hWnd, TIMER_1);
 		PostQuitMessage(0);
 		break;
 	case WM_PAINT:
-		//OnPaint(hWnd);
+		OnPaint(hWnd);
 		break;
 	case WM_TIMER:
 		OnTimer(hWnd, wParam);
 		break;
+	case WM_DROPFILES:
+		OnDropFiles(hWnd, wParam);
+		bass_manager.StreamPlay();
+		break;
 	case WM_HSCROLL:
 		//TODO: trackbar 
-		break;
-	case WM_LBUTTONDOWN:
-
 		break;
 	}
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
@@ -73,8 +79,8 @@ void Window_Manager::OnTimer(HWND hwnd, int timerID)
 char* Window_Manager::OpenFile(HWND hwnd)
 {
 	OPENFILENAME openFileDialog;
-	char szDirect[260];
-	char szFileName[260];
+	char szDirect[MAX_PATH];
+	char szFileName[MAX_PATH];
 
 	memset(&openFileDialog, 0, sizeof(OPENFILENAME));
 	openFileDialog.hwndOwner = hwnd;
@@ -109,7 +115,7 @@ char* Window_Manager::OpenFile(HWND hwnd)
 void Window_Manager::OnMusicLoad(HWND hwnd)
 {
 	char* file = OpenFile(hwnd);
-	bass_manager.StreamCreate(file);
+	bass_manager.AddFileNameToList(file);
 	trackTime = bass_manager.GetStreamTime();
 	currentTrackTime = 0;
 
@@ -119,19 +125,92 @@ void Window_Manager::OnMusicLoad(HWND hwnd)
 
 void Window_Manager::OnCreate(HWND hwnd)
 {
+	DragAcceptFiles(hwnd, TRUE);
+
 	trackBar = CreateTrackbar(hwnd, 0, 100);
 	ShowWindow(trackBar, SW_SHOWNORMAL);
 	
-	InvalidateRect(hwnd, NULL, true);
+	images = new BitMapImage[IMAGES_COUNT];
+
+	images[0] =  BitMapImage(5, CW_IMAGE_MENU_TOP, CW_IMAGE_PLAYLIST_PATH);
+	images[1] =  BitMapImage(170, CW_IMAGE_MENU_TOP, CW_IMAGE_REWIND_PATH);
+	images[2] =  BitMapImage(225, CW_IMAGE_MENU_TOP, CW_IMAGE_PLAY_PATH);
+	images[3] =  BitMapImage(280, CW_IMAGE_MENU_TOP, CW_IMAGE_FORWARD_PATH);
+	images[4] =  BitMapImage(335, CW_IMAGE_MENU_TOP, CW_IMAGE_STOP_PATH);
+	images[5] =  BitMapImage(225, CW_IMAGE_MENU_TOP, CW_IMAGE_RESUME_PATH);
+
+	
+	images[5].SetVisible(FALSE);
 }
 
 void Window_Manager::OnPaint(HWND hwnd)
 {
 	PAINTSTRUCT ps;
 	HDC hdc = BeginPaint(hwnd, &ps);
-	
+
+	SendMessage(trackBar, WM_PAINT, 0, 0);
+	for (int i = 0; i < IMAGES_COUNT; i++)
+	{
+		images[i].Draw(hdc);
+	}
+
+
 	EndPaint(hwnd, &ps);
 	ValidateRect(hwnd, NULL);
+}
+
+void Window_Manager::OnLButtonDown(HWND hwnd, LPARAM lParam)
+{
+	selectedImage = NULL;
+	POINT point;
+	point.x = LOWORD(lParam);
+	point.y = HIWORD(lParam);
+
+	for (int i = 0; i < IMAGES_COUNT; i++)
+	{
+		int left = images[i].GetLeft();
+		
+		if (left + 5 <= point.x && left + images[i].GetWidth() - 5 >= point.x)
+		{
+			int top = images[i].GetTop();
+			if (top + 5 <= point.y && top + images[i].GetHeight() - 5 >= point.y)
+			{
+				selectedImage = &(images[i]);
+				break;
+			}
+		}
+	}
+
+	if (selectedImage != NULL)
+	{
+		selectedImage->Move(ADD_ONCLICK_X, ADD_ONCLICK_Y);
+		InvalidateRect(hwnd, NULL, true);
+	}
+}
+
+void Window_Manager::OnLButtonUp(HWND hwnd, LPARAM lParam)
+{
+	if (selectedImage != NULL)
+	{
+		selectedImage->Move(-ADD_ONCLICK_X, -ADD_ONCLICK_Y);
+		selectedImage = NULL;
+		InvalidateRect(hwnd, NULL, true);
+	}
+}
+
+void Window_Manager::OnDropFiles(HWND hwnd, WPARAM wParam)
+{
+	HDROP hDrop = (HDROP)wParam;
+
+	TCHAR szFileName[MAX_PATH];
+	DWORD dwCount = DragQueryFile(hDrop, 0xFFFFFFFF, szFileName, MAX_PATH);
+	for (int i = 0; i < dwCount; i++)
+	{
+		DragQueryFileA(hDrop, i, szFileName, MAX_PATH);
+		bass_manager.AddFileNameToList(szFileName);
+	}
+
+	DragFinish(hDrop);
 }
 
 char * Window_Manager::TimeToString(long time)

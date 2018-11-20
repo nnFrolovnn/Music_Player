@@ -132,16 +132,6 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Image Include="resources\Fast Forward_64px.bmp" />
-    <Image Include="resources\Menu 2_48px.bmp" />
-    <Image Include="resources\Menu_64px.bmp" />
-    <Image Include="resources\Playlist_50px.bmp" />
-    <Image Include="resources\Play_64px.bmp" />
-    <Image Include="resources\Resume Button_64px.bmp" />
-    <Image Include="resources\Rewind_64px.bmp" />
-    <Image Include="resources\Stop_64px.bmp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\BASS.redist.2.4.12.1\build\native\BASS.redist.targets" Condition="Exists('..\packages\BASS.redist.2.4.12.1\build\native\BASS.redist.targets')" />

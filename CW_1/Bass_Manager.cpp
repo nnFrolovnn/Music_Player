@@ -3,35 +3,56 @@
 Bass_Manager::Bass_Manager()
 {
 	stream = 0;
+	musicFilesCount = 0;
+	playList = NULL;
+	isPlaying = FALSE;
+	isPause = FALSE;
 
 	BOOL init = BASS_Init(-1, 44100, BASS_DEVICE_STEREO | BASS_DEVICE_3D, NULL, NULL);
 }
-
 
 Bass_Manager::~Bass_Manager()
 {
 	BASS_Free();
 }
 
-int Bass_Manager::StreamCreate(char* filePath)
-{
-	stream = BASS_StreamCreateFile(FALSE, filePath, 0, 0, 0);
-	return 0;
-}
-
 void Bass_Manager::StreamPlay()
 {
-	BASS_ChannelPlay(stream, FALSE);
+	if (playList != NULL) 
+	{
+		if (!isPlaying && !isPause)
+		{
+			stream = BASS_StreamCreateFile(FALSE, playList[0].filePath, 0, 0, 0);
+
+			BASS_ChannelPlay(stream, TRUE);
+			isPlaying = TRUE;
+			isPause = FALSE;
+		}
+		else if (isPlaying && !isPause)
+		{
+			StreamPause();
+		}
+		else if (!isPlaying && isPause)
+		{
+			BASS_ChannelPlay(stream, FALSE);
+			isPause = FALSE;
+			isPlaying = TRUE;
+		}
+	}
 }
 
 void Bass_Manager::StreamStop()
 {
 	BASS_ChannelStop(stream);
+	isPlaying = FALSE;
+	isPause = FALSE;
 }
 
 void Bass_Manager::StreamPause()
 {
 	BASS_ChannelPause(stream);
+	isPause = TRUE;
+	isPlaying = FALSE;
 }
 
 int Bass_Manager::GetLastError()
@@ -50,6 +71,38 @@ double Bass_Manager::GetStreamTime()
 {
 	QWORD len = BASS_ChannelGetLength(stream, BASS_POS_BYTE);
 	return BASS_ChannelBytes2Seconds(stream, len);
+}
+
+BOOL Bass_Manager::AddFileNameToList(char * filePath)
+{
+	if (filePath != NULL)
+	{
+		if (playList != NULL)
+		{
+			musicFile* temp = new musicFile[musicFilesCount + 1];
+			for (int i = 0; i < musicFilesCount; i++)
+			{
+				temp[i] = playList[i];
+			}
+			playList = temp;
+			musicFilesCount++;
+			temp = NULL;
+		}
+		else
+		{
+			musicFilesCount = 1;
+			playList = new musicFile[1];
+		}
+
+		const int len = strlen(filePath);
+
+		playList[musicFilesCount - 1].filePath = new char[len + 1];
+		strcpy_s(playList[musicFilesCount - 1].filePath, len + 1, filePath);
+		playList[musicFilesCount - 1].name = playList[musicFilesCount - 1].filePath;
+
+		return TRUE;
+	}
+	return FALSE;
 }
 
 

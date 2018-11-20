@@ -17,7 +17,7 @@ void RegWNDClassEX(HINSTANCE hInstance)
 	wcex.lpfnWndProc = MainWindowProc;
 	wcex.hInstance = hInstance;
 	wcex.hCursor = LoadCursor(0, IDC_ARROW); //IDC_HAND
-	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW);
+	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 2);
 	wcex.lpszClassName = CW_WINDOW_CLASS_NAME;
 	RegisterClassExA(&wcex);
 }
@@ -26,7 +26,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 {
 	RegWNDClassEX(hInstance);
 
-	HWND hMainWindow = CreateWindowExA(0, CW_WINDOW_CLASS_NAME, CW_WINDOW_NAME, WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZE, 0, 0,
+	HWND hMainWindow = CreateWindowExA(0, CW_WINDOW_CLASS_NAME, CW_WINDOW_NAME, WS_OVERLAPPEDWINDOW/*WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZE*/, 0, 0,
 		CW_WINDOW_WIDTH, CW_WINDOW_HEIGHT, NULL, NULL, hInstance, NULL);
 
 	ShowWindow(hMainWindow, SW_SHOWNORMAL);
