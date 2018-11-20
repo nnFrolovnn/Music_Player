@@ -24,6 +24,9 @@
     <ClCompile Include="Window_Manager.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="BitMapImage.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bass_Manager.h">
@@ -35,8 +38,37 @@
     <ClInclude Include="Window_Manager.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="BitMapImage.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\Fast Forward_64px.bmp">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="resources\Menu 2_48px.bmp">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="resources\Menu_64px.bmp">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="resources\Play_64px.bmp">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="resources\Playlist_50px.bmp">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="resources\Resume Button_64px.bmp">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="resources\Rewind_64px.bmp">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="resources\Stop_64px.bmp">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
   </ItemGroup>
 </Project>

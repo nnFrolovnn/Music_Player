@@ -4,6 +4,7 @@
 #include "Bass_Manager.h"
 #include "CW_Header.h"
 #include <string>
+#include <IImgCtx.h>
 
 #define TIMER_1 1
 

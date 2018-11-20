@@ -117,11 +117,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Bass_Manager.cpp" />
+    <ClCompile Include="BitMapImage.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Window_Manager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bass_Manager.h" />
+    <ClInclude Include="BitMapImage.h" />
     <ClInclude Include="CW_Header.h" />
     <ClInclude Include="Window_Manager.h" />
   </ItemGroup>
@@ -129,6 +131,16 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\Fast Forward_64px.bmp" />
+    <Image Include="resources\Menu 2_48px.bmp" />
+    <Image Include="resources\Menu_64px.bmp" />
+    <Image Include="resources\Playlist_50px.bmp" />
+    <Image Include="resources\Play_64px.bmp" />
+    <Image Include="resources\Resume Button_64px.bmp" />
+    <Image Include="resources\Rewind_64px.bmp" />
+    <Image Include="resources\Stop_64px.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

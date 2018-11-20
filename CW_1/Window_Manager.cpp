@@ -1,6 +1,5 @@
 #include "Window_Manager.h"
 
-
 Window_Manager::Window_Manager()
 {
 	trackBar = NULL;
@@ -159,7 +158,6 @@ char * Window_Manager::TimeToString(long time)
 
 	return strTime;
 }
-
 
 HWND WINAPI Window_Manager::CreateTrackbar(HWND hwndDlg, UINT iMin, UINT iMax)
 {
