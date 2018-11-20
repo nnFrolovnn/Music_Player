@@ -11,11 +11,13 @@ public:
 	Bass_Manager();
 	~Bass_Manager();
 
-	int StreamCreate(char filePath[]);
+	int StreamCreate(char* filePath);
 	void StreamPlay();
 	void StreamStop();
 	void StreamPause();
 	int GetLastError();
+	char* GetStreamInfo();
+	double GetStreamTime();
 
 private:
 	HSTREAM stream;

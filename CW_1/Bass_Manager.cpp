@@ -13,7 +13,7 @@ Bass_Manager::~Bass_Manager()
 	BASS_Free();
 }
 
-int Bass_Manager::StreamCreate(char filePath[])
+int Bass_Manager::StreamCreate(char* filePath)
 {
 	stream = BASS_StreamCreateFile(FALSE, filePath, 0, 0, 0);
 	return 0;
@@ -37,6 +37,19 @@ void Bass_Manager::StreamPause()
 int Bass_Manager::GetLastError()
 {
 	return BASS_ErrorGetCode();
+}
+
+char * Bass_Manager::GetStreamInfo()
+{
+
+
+	return nullptr;
+}
+
+double Bass_Manager::GetStreamTime()
+{
+	QWORD len = BASS_ChannelGetLength(stream, BASS_POS_BYTE);
+	return BASS_ChannelBytes2Seconds(stream, len);
 }
 
 

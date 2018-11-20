@@ -1,7 +1,11 @@
 #pragma once
 #include <Windows.h>
-#include "Draw_Manager.h"
+#include <CommCtrl.h>
 #include "Bass_Manager.h"
+#include "CW_Header.h"
+#include <string>
+
+#define TIMER_1 1
 
 class Window_Manager
 {
@@ -12,10 +16,19 @@ public:
 	BOOL SetHinstance(HINSTANCE hinst);
 
 private:
-	Draw_Manager draw_manager;
 	Bass_Manager bass_manager;
 	HINSTANCE hinstance;
+	HWND trackBar;
+	double trackTime;
+	double currentTrackTime;
 
-	char* OnOpenFile(HWND hwnd);
+	
+	void OnTimer(HWND hwnd, int timerID);
+	char* OpenFile(HWND hwnd);
+	void OnMusicLoad(HWND hwnd);
+	void OnCreate(HWND hwnd);
+	void OnPaint(HWND hwnd);
+	char* TimeToString(long time);
+	HWND WINAPI CreateTrackbar(HWND hwndDlg, UINT iMin, UINT iMax);
 };
 

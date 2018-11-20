@@ -117,14 +117,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Bass_Manager.cpp" />
-    <ClCompile Include="Draw_Manager.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Window_Manager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bass_Manager.h" />
     <ClInclude Include="CW_Header.h" />
-    <ClInclude Include="Draw_Manager.h" />
     <ClInclude Include="Window_Manager.h" />
   </ItemGroup>
   <ItemGroup>
