@@ -23,6 +23,8 @@ public:
 	char* GetStreamInfo();
 	double GetStreamTime();
 	BOOL AddFileNameToList(char* filePath);
+	BOOL MusicHasPlayed();
+	BOOL MusicCanPlay();
 
 private:
 	HSTREAM stream;

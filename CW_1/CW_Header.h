@@ -5,10 +5,10 @@
 #define CW_WINDOW_WIDTH 500
 #define CW_WINDOW_HEIGHT 300
 
-#define CW_TRACKBAR_WIDTH CW_WINDOW_WIDTH-5
-#define CW_TRACKBAR_HEIGHT (int)(CW_WINDOW_HEIGHT/10.0)
-#define CW_TRACKBAR_X -5
-#define CW_TRACKBAR_Y (int)(CW_WINDOW_HEIGHT/2.0)+20
+#define CW_TRACKBAR_WIDTH CW_WINDOW_WIDTH
+#define CW_TRACKBAR_HEIGHT 6
+#define CW_TRACKBAR_X 0
+#define CW_TRACKBAR_Y (int)(CW_WINDOW_HEIGHT/2.0)+60
 
 #define CW_IMAGE_MENU_TOP CW_TRACKBAR_Y+CW_TRACKBAR_HEIGHT
 #define TRANSPARENT_COLOR 0x00FFFFFF
@@ -34,3 +34,30 @@ HBITMAP hBitmap = (HBITMAP)LoadImage(NULL, CW_IMAGE_PLAY_PATH, IMAGE_BITMAP, 0, 
 
 SendMessage(button, BM_SETIMAGE, IMAGE_BITMAP, LPARAM(hBitmap));
 SendMessage(button, WM_PAINT, 0, 0);*/
+
+/*void TrackBar::GradientRectangle(HDC hdc, LONG x1, LONG y1, LONG x2, LONG y2, COLORREF top, COLORREF bottom)
+{
+TRIVERTEX vertex[2];
+vertex[0].x = x1;
+vertex[0].y = y1;
+vertex[0].Red = 0x0000;
+vertex[0].Green = 0x8000;
+vertex[0].Blue = 0x8000;
+vertex[0].Alpha = 0x0000;
+
+vertex[1].x = x2;
+vertex[1].y = y2;
+vertex[1].Red = 0x0000;
+vertex[1].Green = 0xd000;
+vertex[1].Blue = 0xd000;
+vertex[1].Alpha = 0x0000;
+
+// Create a GRADIENT_RECT structure that
+// references the TRIVERTEX vertices.
+GRADIENT_RECT gRect;
+gRect.UpperLeft = 0;
+gRect.LowerRight = 1;
+
+// Draw a shaded rectangle.
+GradientFill(hdc, vertex, 2, &gRect, 1, GRADIENT_FILL_RECT_V);
+}*/

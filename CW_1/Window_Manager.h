@@ -7,6 +7,7 @@
 #include "Bass_Manager.h"
 #include "CW_Header.h"
 #include "BitMapImage.h"
+#include "TrackBar.h"
 
 #pragma comment (lib, "ComCtl32")
 
@@ -26,21 +27,21 @@ public:
 private:
 	Bass_Manager bass_manager;
 	HINSTANCE hinstance;
-	HWND trackBar;
+	HWND trackBarHwnd;
 	double trackTime;
 	double currentTrackTime;
 	BitMapImage* images;
 	BitMapImage * selectedImage;
+	TrackBar* trackBar;
 
 	void OnTimer(HWND hwnd, int timerID);
 	char* OpenFile(HWND hwnd);
 	void OnMusicLoad(HWND hwnd);
 	void OnCreate(HWND hwnd);
-	void OnPaint(HWND hwnd);
+	void OnPaint(HWND hwnd, LPARAM lParam);
 	void OnLButtonDown(HWND hwnd, LPARAM lParam);
 	void OnLButtonUp(HWND hwnd, LPARAM lParam);
 	void OnDropFiles(HWND hwnd, WPARAM wParam);
 	char* TimeToString(long time);
-	HWND WINAPI CreateTrackbar(HWND hwndDlg, UINT iMin, UINT iMax);
 };
 

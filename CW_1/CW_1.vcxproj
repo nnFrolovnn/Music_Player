@@ -119,12 +119,14 @@
     <ClCompile Include="Bass_Manager.cpp" />
     <ClCompile Include="BitMapImage.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="TrackBar.cpp" />
     <ClCompile Include="Window_Manager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bass_Manager.h" />
     <ClInclude Include="BitMapImage.h" />
     <ClInclude Include="CW_Header.h" />
+    <ClInclude Include="TrackBar.h" />
     <ClInclude Include="Window_Manager.h" />
   </ItemGroup>
   <ItemGroup>

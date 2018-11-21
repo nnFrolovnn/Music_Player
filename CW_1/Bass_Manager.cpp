@@ -32,7 +32,7 @@ void Bass_Manager::StreamPlay()
 		{
 			StreamPause();
 		}
-		else if (!isPlaying && isPause)
+		else if (!isPlaying && isPause && stream != 0)
 		{
 			BASS_ChannelPlay(stream, FALSE);
 			isPause = FALSE;
@@ -43,16 +43,26 @@ void Bass_Manager::StreamPlay()
 
 void Bass_Manager::StreamStop()
 {
-	BASS_ChannelStop(stream);
-	isPlaying = FALSE;
-	isPause = FALSE;
+	if (stream != 0)
+	{
+		if (isPlaying || isPause)
+		{
+			BASS_ChannelStop(stream);
+			BASS_StreamFree(stream);
+		}
+		isPlaying = FALSE;
+		isPause = FALSE;
+	}
 }
 
 void Bass_Manager::StreamPause()
 {
-	BASS_ChannelPause(stream);
-	isPause = TRUE;
-	isPlaying = FALSE;
+	if (stream != 0 && isPlaying)
+	{
+		BASS_ChannelPause(stream);
+		isPause = TRUE;
+		isPlaying = FALSE;
+	}
 }
 
 int Bass_Manager::GetLastError()
@@ -69,8 +79,13 @@ char * Bass_Manager::GetStreamInfo()
 
 double Bass_Manager::GetStreamTime()
 {
-	QWORD len = BASS_ChannelGetLength(stream, BASS_POS_BYTE);
-	return BASS_ChannelBytes2Seconds(stream, len);
+	if (stream != 0)
+	{
+		QWORD len = BASS_ChannelGetLength(stream, BASS_POS_BYTE);
+		return BASS_ChannelBytes2Seconds(stream, len);
+	}
+	
+	return 0;
 }
 
 BOOL Bass_Manager::AddFileNameToList(char * filePath)
@@ -105,4 +120,13 @@ BOOL Bass_Manager::AddFileNameToList(char * filePath)
 	return FALSE;
 }
 
+BOOL Bass_Manager::MusicHasPlayed()
+{
+	return (stream != 0 && (isPlaying || isPause))? TRUE: FALSE;
+}
+
+BOOL Bass_Manager::MusicCanPlay()
+{
+	return (playList != NULL)? TRUE: FALSE;
+}
 
