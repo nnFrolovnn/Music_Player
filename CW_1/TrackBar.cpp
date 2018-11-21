@@ -211,7 +211,7 @@ void TrackBar::OnMouseMove(HWND hWnd, LPARAM lParam)
 		slider.left = point.x - SLIDER_WIDTH / 2;
 		slider.right = slider.left + SLIDER_WIDTH;
 
-		SendMessage(hWnd, WM_HSCROLL, 0, currentState);
+		SendMessage(hWnd, WM_HSCROLL, currentState, currentState);
 		InvalidateRect(parentWindow, &barRect, true);
 		SendMessage(hWnd, WM_PAINT, 0, PAINT_MESS_FROM_TRACKBAR);
 	}

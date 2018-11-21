@@ -42,6 +42,7 @@ private:
 	void OnLButtonDown(HWND hwnd, LPARAM lParam);
 	void OnLButtonUp(HWND hwnd, LPARAM lParam);
 	void OnDropFiles(HWND hwnd, WPARAM wParam);
+	void OnScroll(HWND hwnd, WPARAM wParam, LPARAM lParam);
 	char* TimeToString(long time);
 };
 

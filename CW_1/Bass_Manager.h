@@ -6,6 +6,7 @@
 #define BM_BASS_INIT_ERROR 1001
 
 struct musicFile {
+	QWORD fileSize;
 	char* filePath;
 	char* name;
 };
@@ -19,12 +20,18 @@ public:
 	void StreamPlay();
 	void StreamStop();
 	void StreamPause();
+	void StreamSetPosition(double percent);
+
 	int GetLastError();
 	char* GetStreamInfo();
 	double GetStreamTime();
+
+
 	BOOL AddFileNameToList(char* filePath);
+
 	BOOL MusicHasPlayed();
 	BOOL MusicCanPlay();
+	BOOL MusicPlayingOrPaused();
 
 private:
 	HSTREAM stream;

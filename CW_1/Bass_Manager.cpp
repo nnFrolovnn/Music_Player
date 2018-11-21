@@ -18,7 +18,7 @@ Bass_Manager::~Bass_Manager()
 
 void Bass_Manager::StreamPlay()
 {
-	if (playList != NULL) 
+	if (playList != NULL)
 	{
 		if (!isPlaying && !isPause)
 		{
@@ -65,6 +65,18 @@ void Bass_Manager::StreamPause()
 	}
 }
 
+void Bass_Manager::StreamSetPosition(double percent)
+{
+	if (stream != 0)
+	{
+		BASS_StreamFree(stream);
+
+		stream = BASS_StreamCreateFile(FALSE, playList[0].filePath, percent * playList[0].fileSize, 0, 0);
+		int err = GetLastError();
+		BASS_ChannelPlay(stream, FALSE);
+	}
+}
+
 int Bass_Manager::GetLastError()
 {
 	return BASS_ErrorGetCode();
@@ -84,7 +96,7 @@ double Bass_Manager::GetStreamTime()
 		QWORD len = BASS_ChannelGetLength(stream, BASS_POS_BYTE);
 		return BASS_ChannelBytes2Seconds(stream, len);
 	}
-	
+
 	return 0;
 }
 
@@ -115,6 +127,16 @@ BOOL Bass_Manager::AddFileNameToList(char * filePath)
 		strcpy_s(playList[musicFilesCount - 1].filePath, len + 1, filePath);
 		playList[musicFilesCount - 1].name = playList[musicFilesCount - 1].filePath;
 
+		//get file size
+		FILE* file;
+		fopen_s(&file, playList[musicFilesCount - 1].filePath, "r");
+		long int size_of_file = 0;
+		fseek(file, 0L, SEEK_END);
+		size_of_file = ftell(file);
+		fclose(file);
+
+		playList[musicFilesCount - 1].fileSize = size_of_file;
+
 		return TRUE;
 	}
 	return FALSE;
@@ -122,11 +144,16 @@ BOOL Bass_Manager::AddFileNameToList(char * filePath)
 
 BOOL Bass_Manager::MusicHasPlayed()
 {
-	return (stream != 0 && (isPlaying || isPause))? TRUE: FALSE;
+	return (stream != 0 && (isPlaying || isPause)) ? TRUE : FALSE;
 }
 
 BOOL Bass_Manager::MusicCanPlay()
 {
-	return (playList != NULL)? TRUE: FALSE;
+	return (playList != NULL) ? TRUE : FALSE;
+}
+
+BOOL Bass_Manager::MusicPlayingOrPaused()
+{
+	return (isPause || isPlaying);
 }
 

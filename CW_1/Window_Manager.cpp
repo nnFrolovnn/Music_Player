@@ -49,12 +49,7 @@ LRESULT Window_Manager::MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			OnDropFiles(hWnd, wParam);
 			break;
 		case WM_HSCROLL:
-			//TODO: trackbar 
-			if ((int)((currentTrackTime / trackTime) * 100) - 1 == 1)
-			{
-				int o = 0;
-				o += currentTrackTime;
-			}
+			OnScroll(hWnd, wParam, lParam);
 			break;
 		}
 	}
@@ -138,7 +133,7 @@ void Window_Manager::OnCreate(HWND hwnd)
 {
 	DragAcceptFiles(hwnd, TRUE);
 
-	trackBar = new TrackBar(hwnd, CW_TRACKBAR_X, CW_TRACKBAR_Y, CW_TRACKBAR_WIDTH);
+	trackBar = new TrackBar(hwnd, CW_TRACKBAR_X, CW_TRACKBAR_Y, CW_TRACKBAR_WIDTH, CW_TRACKBAR_MIN, CW_TRACKBAR_MAX);
 	trackBarHwnd = hwnd;
 
 	ShowWindow(trackBarHwnd, SW_SHOWNORMAL);
@@ -279,6 +274,21 @@ void Window_Manager::OnDropFiles(HWND hwnd, WPARAM wParam)
 	}
 
 	DragFinish(hDrop);
+}
+
+void Window_Manager::OnScroll(HWND hwnd, WPARAM wParam, LPARAM lParam)
+{
+	//message from trackBar
+	if (wParam == lParam)
+	{
+		double percent = ((double)lParam - CW_TRACKBAR_MIN) / ((double)CW_TRACKBAR_MAX - CW_TRACKBAR_MIN);
+		currentTrackTime = percent*trackTime;
+
+		if (bass_manager.MusicPlayingOrPaused())
+		{
+			bass_manager.StreamSetPosition(percent);
+		}
+	}
 }
 
 char * Window_Manager::TimeToString(long time)
