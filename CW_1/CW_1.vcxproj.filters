@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Help">
+      <UniqueIdentifier>{e920ffc0-58c3-41f5-82d4-050fc5c09ff4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -50,5 +53,94 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Help\bass_fx.chm">
+      <Filter>Help</Filter>
+    </None>
+    <None Include="Help\basswv.chm">
+      <Filter>Help</Filter>
+    </None>
+    <None Include="Help\basswma.chm">
+      <Filter>Help</Filter>
+    </None>
+    <None Include="Help\basswasapi.chm">
+      <Filter>Help</Filter>
+    </None>
+    <None Include="Help\bassopus.chm">
+      <Filter>Help</Filter>
+    </None>
+    <None Include="Help\bassmix.chm">
+      <Filter>Help</Filter>
+    </None>
+    <None Include="Help\bassmidi.chm">
+      <Filter>Help</Filter>
+    </None>
+    <None Include="Help\basshls.chm">
+      <Filter>Help</Filter>
+    </None>
+    <None Include="Help\bassflac.chm">
+      <Filter>Help</Filter>
+    </None>
+    <None Include="Help\bassenc_opus.chm">
+      <Filter>Help</Filter>
+    </None>
+    <None Include="Help\bassenc_ogg.chm">
+      <Filter>Help</Filter>
+    </None>
+    <None Include="Help\bassenc.chm">
+      <Filter>Help</Filter>
+    </None>
+    <None Include="Help\bassdsd.chm">
+      <Filter>Help</Filter>
+    </None>
+    <None Include="Help\basscd.chm">
+      <Filter>Help</Filter>
+    </None>
+    <None Include="Help\bassalac.chm">
+      <Filter>Help</Filter>
+    </None>
+    <None Include="Help\bass.chm">
+      <Filter>Help</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Help\tags-readme.txt">
+      <Filter>Help</Filter>
+    </Text>
+    <Text Include="Help\bass_wadsp.txt">
+      <Filter>Help</Filter>
+    </Text>
+    <Text Include="Help\BASS_VST.TXT">
+      <Filter>Help</Filter>
+    </Text>
+    <Text Include="Help\BASS_TTA.txt">
+      <Filter>Help</Filter>
+    </Text>
+    <Text Include="Help\BASS_SPX.txt">
+      <Filter>Help</Filter>
+    </Text>
+    <Text Include="Help\BASS_OFR.txt">
+      <Filter>Help</Filter>
+    </Text>
+    <Text Include="Help\BASS_MPC.txt">
+      <Filter>Help</Filter>
+    </Text>
+    <Text Include="Help\BASS_APE.txt">
+      <Filter>Help</Filter>
+    </Text>
+    <Text Include="Help\bass_adx.txt">
+      <Filter>Help</Filter>
+    </Text>
+    <Text Include="Help\BASS_AC3.txt">
+      <Filter>Help</Filter>
+    </Text>
+    <Text Include="Help\BASS_AAC.txt">
+      <Filter>Help</Filter>
+    </Text>
+    <Text Include="Help\basszxtune.txt">
+      <Filter>Help</Filter>
+    </Text>
+    <Text Include="Help\BassWinamp.txt">
+      <Filter>Help</Filter>
+    </Text>
   </ItemGroup>
 </Project>

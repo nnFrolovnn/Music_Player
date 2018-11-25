@@ -130,14 +130,46 @@
     <ClInclude Include="Window_Manager.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Help\bass.chm" />
+    <None Include="Help\bassalac.chm" />
+    <None Include="Help\basscd.chm" />
+    <None Include="Help\bassdsd.chm" />
+    <None Include="Help\bassenc.chm" />
+    <None Include="Help\bassenc_ogg.chm" />
+    <None Include="Help\bassenc_opus.chm" />
+    <None Include="Help\bassflac.chm" />
+    <None Include="Help\basshls.chm" />
+    <None Include="Help\bassmidi.chm" />
+    <None Include="Help\bassmix.chm" />
+    <None Include="Help\bassopus.chm" />
+    <None Include="Help\basswasapi.chm" />
+    <None Include="Help\basswma.chm" />
+    <None Include="Help\basswv.chm" />
+    <None Include="Help\bass_fx.chm" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Help\BassWinamp.txt" />
+    <Text Include="Help\basszxtune.txt" />
+    <Text Include="Help\BASS_AAC.txt" />
+    <Text Include="Help\BASS_AC3.txt" />
+    <Text Include="Help\bass_adx.txt" />
+    <Text Include="Help\BASS_APE.txt" />
+    <Text Include="Help\BASS_MPC.txt" />
+    <Text Include="Help\BASS_OFR.txt" />
+    <Text Include="Help\BASS_SPX.txt" />
+    <Text Include="Help\BASS_TTA.txt" />
+    <Text Include="Help\BASS_VST.TXT" />
+    <Text Include="Help\bass_wadsp.txt" />
+    <Text Include="Help\tags-readme.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\BASS.redist.2.4.12.1\build\native\BASS.redist.targets" Condition="Exists('..\packages\BASS.redist.2.4.12.1\build\native\BASS.redist.targets')" />
     <Import Project="..\packages\BASS.2.4.12.1\build\native\BASS.targets" Condition="Exists('..\packages\BASS.2.4.12.1\build\native\BASS.targets')" />
+    <Import Project="..\packages\BASS.Native.2.4.13.10\build\native\BASS.Native.targets" Condition="Exists('..\packages\BASS.Native.2.4.13.10\build\native\BASS.Native.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -145,5 +177,6 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\BASS.redist.2.4.12.1\build\native\BASS.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\BASS.redist.2.4.12.1\build\native\BASS.redist.targets'))" />
     <Error Condition="!Exists('..\packages\BASS.2.4.12.1\build\native\BASS.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\BASS.2.4.12.1\build\native\BASS.targets'))" />
+    <Error Condition="!Exists('..\packages\BASS.Native.2.4.13.10\build\native\BASS.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\BASS.Native.2.4.13.10\build\native\BASS.Native.targets'))" />
   </Target>
 </Project>

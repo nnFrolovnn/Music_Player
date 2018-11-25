@@ -11,6 +11,7 @@ TrackBar::TrackBar()
 	barRect.right = 0;
 	barRect.top = 0;
 	barRect.bottom = 0;
+	sliderImage = NULL;
 }
 
 TrackBar::TrackBar(HWND hwnd, int x, int y, int width)
@@ -26,10 +27,7 @@ TrackBar::TrackBar(HWND hwnd, int x, int y, int width)
 		min = 0;
 		max = 100;
 
-		slider.left = x;
-		slider.right = slider.left + SLIDER_WIDTH;
-		slider.top = y - SLIDER_HEIGHT / 2;
-		slider.bottom = slider.top + SLIDER_WIDTH;
+
 		isSliderVisible = FALSE;
 		isPressed = FALSE;
 
@@ -47,6 +45,8 @@ TrackBar::TrackBar(HWND hwnd, int x, int y, int width)
 		barRect.right = x + width;
 		barRect.top = y - height / 2;
 		barRect.bottom = barRect.top + height;
+
+		sliderImage = new BitMapImage(0, x, y - height / 2, TRACK_IMAGE_PATH);
 	}
 	else
 	{
@@ -70,6 +70,7 @@ TrackBar::TrackBar(HWND hwnd, int x, int y, int width, int min, int max) :TrackB
 BOOL TrackBar::MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	BOOL result = FALSE;
+	int left = leftCenterPoint.x;
 
 	switch (uMsg)
 	{
@@ -86,17 +87,22 @@ BOOL TrackBar::MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 		}
 
 		currentState = (min <= lParam && lParam <= max) ? lParam : currentState;
-		slider.left = leftCenterPoint.x + ((float)(currentState- min))/((float)max - min)*width - SLIDER_WIDTH / 2;
-		if (slider.left < leftCenterPoint.x)
+		left = leftCenterPoint.x + ((float)(currentState- min))/((float)max - min)*width - SLIDER_WIDTH / 2;
+		if (left < leftCenterPoint.x)
 		{
-			slider.left = leftCenterPoint.x;
+			left = leftCenterPoint.x;
 		}
-		slider.right = slider.left + SLIDER_WIDTH;
+		if (left + sliderImage->GetWidth() > leftCenterPoint.x + width)
+		{
+			left = leftCenterPoint.x + width - sliderImage->GetWidth();
+		}
+		sliderImage->SetLeft(left);
+		/*slider.right = slider.left + SLIDER_WIDTH;
 		if (slider.right > leftCenterPoint.x + width)
 		{
 			slider.right = width;
 			slider.left = slider.right - SLIDER_WIDTH;
-		}
+		}*/
 		result = TRUE;
 		break;
 	case WM_MOUSEMOVE:
@@ -131,7 +137,8 @@ void TrackBar::Draw(HDC hdc, LPARAM lParam)
 
 		if (isSliderVisible)
 		{
-			Rectangle(hdc, slider.left, slider.top, slider.right, slider.bottom);
+			sliderImage->Draw(hdc);
+			//Rectangle(hdc, slider.left, slider.top, slider.right, slider.bottom);
 		}
 		SetBkMode(hdc, oldMode);
 	}
@@ -161,8 +168,10 @@ BOOL TrackBar::OnButtonDown(HWND hWnd, LPARAM lParam)
 
 			isSliderVisible = TRUE;
 			isPressed = TRUE;
-			slider.left = point.x - SLIDER_WIDTH / 2;
-			slider.right = slider.left + SLIDER_WIDTH;
+
+			sliderImage->SetLeft(point.x - height / 2);
+			//slider.left = point.x - SLIDER_WIDTH / 2;
+			//slider.right = slider.left + SLIDER_WIDTH;
 
 			InvalidateRect(parentWindow, &barRect, true);
 			SendMessage(hWnd, WM_PAINT, 0, PAINT_MESS_FROM_TRACKBAR);
@@ -208,8 +217,10 @@ void TrackBar::OnMouseMove(HWND hWnd, LPARAM lParam)
 			temp = max;
 		}
 		currentState = temp;
-		slider.left = point.x - SLIDER_WIDTH / 2;
-		slider.right = slider.left + SLIDER_WIDTH;
+
+		sliderImage->SetLeft(point.x - height / 2);
+		//slider.left = point.x - SLIDER_WIDTH / 2;
+		//slider.right = slider.left + SLIDER_WIDTH;
 
 		SendMessage(hWnd, WM_HSCROLL, currentState, currentState);
 		InvalidateRect(parentWindow, &barRect, true);

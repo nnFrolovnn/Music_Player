@@ -1,3 +1,33 @@
 ﻿  Bass_Manager.cpp
-d:\учеба\5 семестр\курсовая\cw_1\cw_1\bass_manager.cpp(74): warning C4244: аргумент: преобразование "double" в "QWORD", возможна потеря данных
+d:\учеба\5 семестр\курсовая\cw_1\cw_1\bass_cmponents\bassmod.h(65): warning C4005: BASS_MUSIC_RAMP: изменение макроопределения
+  d:\учеба\5 семестр\курсовая\cw_1\packages\bass.2.4.12.1\build\native\include\bass.h(303): note: см. предыдущее определение "BASS_MUSIC_RAMP"
+d:\учеба\5 семестр\курсовая\cw_1\cw_1\bass_cmponents\bassmod.h(66): warning C4005: BASS_MUSIC_RAMPS: изменение макроопределения
+  d:\учеба\5 семестр\курсовая\cw_1\packages\bass.2.4.12.1\build\native\include\bass.h(304): note: см. предыдущее определение "BASS_MUSIC_RAMPS"
+d:\учеба\5 семестр\курсовая\cw_1\cw_1\bass_cmponents\bassmod.h(67): warning C4005: BASS_MUSIC_LOOP: изменение макроопределения
+  d:\учеба\5 семестр\курсовая\cw_1\packages\bass.2.4.12.1\build\native\include\bass.h(296): note: см. предыдущее определение "BASS_MUSIC_LOOP"
+d:\учеба\5 семестр\курсовая\cw_1\cw_1\bass_cmponents\bassmod.h(68): warning C4005: BASS_MUSIC_FT2MOD: изменение макроопределения
+  d:\учеба\5 семестр\курсовая\cw_1\packages\bass.2.4.12.1\build\native\include\bass.h(308): note: см. предыдущее определение "BASS_MUSIC_FT2MOD"
+d:\учеба\5 семестр\курсовая\cw_1\cw_1\bass_cmponents\bassmod.h(69): warning C4005: BASS_MUSIC_PT1MOD: изменение макроопределения
+  d:\учеба\5 семестр\курсовая\cw_1\packages\bass.2.4.12.1\build\native\include\bass.h(309): note: см. предыдущее определение "BASS_MUSIC_PT1MOD"
+d:\учеба\5 семестр\курсовая\cw_1\cw_1\bass_cmponents\bassmod.h(70): warning C4005: BASS_MUSIC_POSRESET: изменение макроопределения
+  d:\учеба\5 семестр\курсовая\cw_1\packages\bass.2.4.12.1\build\native\include\bass.h(312): note: см. предыдущее определение "BASS_MUSIC_POSRESET"
+d:\учеба\5 семестр\курсовая\cw_1\cw_1\bass_cmponents\bassmod.h(71): warning C4005: BASS_MUSIC_SURROUND: изменение макроопределения
+  d:\учеба\5 семестр\курсовая\cw_1\packages\bass.2.4.12.1\build\native\include\bass.h(305): note: см. предыдущее определение "BASS_MUSIC_SURROUND"
+d:\учеба\5 семестр\курсовая\cw_1\cw_1\bass_cmponents\bassmod.h(72): warning C4005: BASS_MUSIC_SURROUND2: изменение макроопределения
+  d:\учеба\5 семестр\курсовая\cw_1\packages\bass.2.4.12.1\build\native\include\bass.h(306): note: см. предыдущее определение "BASS_MUSIC_SURROUND2"
+d:\учеба\5 семестр\курсовая\cw_1\cw_1\bass_cmponents\bassmod.h(73): warning C4005: BASS_MUSIC_STOPBACK: изменение макроопределения
+  d:\учеба\5 семестр\курсовая\cw_1\packages\bass.2.4.12.1\build\native\include\bass.h(314): note: см. предыдущее определение "BASS_MUSIC_STOPBACK"
+d:\учеба\5 семестр\курсовая\cw_1\cw_1\bass_cmponents\bassmod.h(74): warning C4005: BASS_MUSIC_CALCLEN: изменение макроопределения
+  d:\учеба\5 семестр\курсовая\cw_1\packages\bass.2.4.12.1\build\native\include\bass.h(302): note: см. предыдущее определение "BASS_MUSIC_CALCLEN"
+d:\учеба\5 семестр\курсовая\cw_1\cw_1\bass_cmponents\bassmod.h(75): warning C4005: BASS_MUSIC_NONINTER: изменение макроопределения
+  d:\учеба\5 семестр\курсовая\cw_1\packages\bass.2.4.12.1\build\native\include\bass.h(310): note: см. предыдущее определение "BASS_MUSIC_NONINTER"
+d:\учеба\5 семестр\курсовая\cw_1\cw_1\bass_cmponents\bassmod.h(76): warning C4005: BASS_MUSIC_NOSAMPLE: изменение макроопределения
+  d:\учеба\5 семестр\курсовая\cw_1\packages\bass.2.4.12.1\build\native\include\bass.h(315): note: см. предыдущее определение "BASS_MUSIC_NOSAMPLE"
+d:\учеба\5 семестр\курсовая\cw_1\cw_1\bass_cmponents\bassmod.h(82): warning C4005: BASS_SYNC_MUSICPOS: изменение макроопределения
+  d:\учеба\5 семестр\курсовая\cw_1\packages\bass.2.4.12.1\build\native\include\bass.h(545): note: см. предыдущее определение "BASS_SYNC_MUSICPOS"
+d:\учеба\5 семестр\курсовая\cw_1\cw_1\bass_manager.cpp(110): warning C4244: аргумент: преобразование "double" в "QWORD", возможна потеря данных
+d:\учеба\5 семестр\курсовая\cw_1\cw_1\bass_manager.cpp(218): warning C4244: инициализация: преобразование "QWORD" в "unsigned int", возможна потеря данных
+d:\учеба\5 семестр\курсовая\cw_1\cw_1\bass_manager.cpp(226): warning C4244: аргумент: преобразование "const QWORD" в "::size_t", возможна потеря данных
+d:\учеба\5 семестр\курсовая\cw_1\cw_1\bass_manager.cpp(226): warning C4244: аргумент: преобразование "QWORD" в "::size_t", возможна потеря данных
+d:\учеба\5 семестр\курсовая\cw_1\cw_1\bass_manager.cpp(255): warning C4244: =: преобразование "QWORD" в "unsigned int", возможна потеря данных
   CW_1.vcxproj -> D:\учеба\5 семестр\Курсовая\CW_1\Debug\CW_1.exe

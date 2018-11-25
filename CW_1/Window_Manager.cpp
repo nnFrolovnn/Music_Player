@@ -8,6 +8,7 @@ Window_Manager::Window_Manager()
 	currentTrackTime = 0;
 	images = NULL;
 	selectedImage = NULL;
+	bass_manager = NULL;
 }
 
 LRESULT Window_Manager::MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -126,12 +127,14 @@ char* Window_Manager::OpenFile(HWND hwnd)
 void Window_Manager::OnMusicLoad(HWND hwnd)
 {
 	char* file = OpenFile(hwnd);
-	bass_manager.AddFileNameToList(file);
+	bass_manager->AddFileNameToList(file);
 }
 
 void Window_Manager::OnCreate(HWND hwnd)
 {
 	DragAcceptFiles(hwnd, TRUE);
+
+	bass_manager = new Bass_Manager(hwnd);
 
 	trackBar = new TrackBar(hwnd, CW_TRACKBAR_X, CW_TRACKBAR_Y, CW_TRACKBAR_WIDTH, CW_TRACKBAR_MIN, CW_TRACKBAR_MAX);
 	trackBarHwnd = hwnd;
@@ -157,7 +160,7 @@ void Window_Manager::OnPaint(HWND hwnd, LPARAM lParam)
 
 	if (lParam != PAINT_MESS_FROM_TRACKBAR)
 	{
-		for (int i = 0; i < IMAGES_COUNT; i++)
+		for (int i = IMAGES_COUNT - 1; i >= 0; i--)
 		{
 			images[i].Draw(hdc);
 		}
@@ -209,47 +212,52 @@ void Window_Manager::OnLButtonUp(HWND hwnd, LPARAM lParam)
 		switch (selectedImage->GetNumber())
 		{
 		case CW_NUMBER_PLAY_LIST_BUTTON:
-
 			break;
 		case CW_NUMBER_REWIND_BUTTON:
 
 			break;
-		case CW_NUMBER_PLAY_BUTTON:		
+		case CW_NUMBER_PLAY_BUTTON:
 			selectedImage->SetVisible(FALSE);
 			images[5].SetVisible(TRUE);
-		
-			
-			if (bass_manager.MusicCanPlay())
+
+			if (bass_manager->MusicCanPlay())
 			{
 				SetTimer(hwnd, TIMER_1, 1000, NULL);
-				hasPlayed = bass_manager.MusicHasPlayed();
+				hasPlayed = bass_manager->MusicHasPlayed();
 			}
-			bass_manager.StreamPlay();
+			bass_manager->StreamPlay();
 
 			if (!hasPlayed)
 			{
 				currentTrackTime = 0;
-				trackTime = bass_manager.GetStreamTime();
+				trackTime = bass_manager->GetStreamTime();
 			}
 			break;
 		case CW_NUMBER_FAST_F_BUTTON:
-
+			if (bass_manager->MusicIsPlayingOrIsPaused())
+			{
+				bass_manager->StreamPlayNext();
+				currentTrackTime = 0;
+				trackTime = bass_manager->GetStreamTime();
+				SendMessage(trackBarHwnd, TBM_SETPOS, TRUE, (int)((currentTrackTime / trackTime) * 100));
+				SetTimer(hwnd, TIMER_1, 1000, NULL);
+			}
 			break;
 		case CW_NUMBER_STOP_BUTTON:
-			if (bass_manager.MusicHasPlayed())
+			if (bass_manager->MusicHasPlayed())
 			{
 				KillTimer(hwnd, TIMER_1);
 				SendMessage(trackBarHwnd, TBM_SETPOS, TRUE, 0);
 				currentTrackTime = 0;
 				trackTime = 0;
 			}
-			bass_manager.StreamStop();
+			bass_manager->StreamStop();
 			break;
-		case CW_NUMBER_RESUME_BUTTON:			
-			if (bass_manager.MusicHasPlayed())
-			{		
+		case CW_NUMBER_RESUME_BUTTON:
+			if (bass_manager->MusicHasPlayed())
+			{
 				KillTimer(hwnd, TIMER_1);
-				bass_manager.StreamPlay();
+				bass_manager->StreamPlay();
 			}
 			selectedImage->SetVisible(FALSE);
 			images[2].SetVisible(TRUE);
@@ -270,7 +278,7 @@ void Window_Manager::OnDropFiles(HWND hwnd, WPARAM wParam)
 	for (int i = 0; i < dwCount; i++)
 	{
 		DragQueryFileA(hDrop, i, szFileName, MAX_PATH);
-		bass_manager.AddFileNameToList(szFileName);
+		bass_manager->AddFileNameToList(szFileName);
 	}
 
 	DragFinish(hDrop);
@@ -282,11 +290,11 @@ void Window_Manager::OnScroll(HWND hwnd, WPARAM wParam, LPARAM lParam)
 	if (wParam == lParam)
 	{
 		double percent = ((double)lParam - CW_TRACKBAR_MIN) / ((double)CW_TRACKBAR_MAX - CW_TRACKBAR_MIN);
-		currentTrackTime = percent*trackTime;
+		currentTrackTime = percent * trackTime;
 
-		if (bass_manager.MusicPlayingOrPaused())
+		if (bass_manager->MusicIsPlayingOrIsPaused())
 		{
-			bass_manager.StreamSetPosition(percent);
+			bass_manager->StreamSetPosition(percent);
 		}
 	}
 }

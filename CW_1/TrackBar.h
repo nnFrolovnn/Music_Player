@@ -2,6 +2,7 @@
 
 #include <Windows.h>
 #include "CW_Header.h"
+#include "BitMapImage.h"
 
 #define PENS_COUNT 6
 #define PEN_WIDTH 1
@@ -12,6 +13,7 @@
 #define SLIDER_HEIGHT CW_TRACKBAR_HEIGHT
 #define SLIDER_WIDTH SLIDER_HEIGHT
 
+#define TRACK_IMAGE_PATH "resources//rect6.bmp"
 class TrackBar
 {
 public:
@@ -31,9 +33,10 @@ private:
 	HWND parentWindow;
 	int max, min;
 	int currentState;
-	RECT slider;
+	//RECT slider;
 	BOOL isSliderVisible;
 	RECT barRect;
+	BitMapImage * sliderImage;
 
 	BOOL OnButtonDown(HWND hWnd, LPARAM lParam);
 	BOOL OnButtonUp(HWND hWnd, LPARAM lParam);

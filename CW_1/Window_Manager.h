@@ -25,7 +25,7 @@ public:
 	BOOL SetHinstance(HINSTANCE hinst);
 
 private:
-	Bass_Manager bass_manager;
+	Bass_Manager* bass_manager;
 	HINSTANCE hinstance;
 	HWND trackBarHwnd;
 	double trackTime;
