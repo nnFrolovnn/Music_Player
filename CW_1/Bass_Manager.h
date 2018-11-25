@@ -28,17 +28,11 @@ public:
 	~Bass_Manager();
 
 	void StreamPlay();
-
-	
-	//if percent == -1, music will be paused, if it plays,
-	//			will be played, if it pauses,
-	//			else won't do anything
-	//if percent != -1, music will play from next position:
-	//			percent * music_file_length			  
-	void StreamPlayFromPosition(double percent);
 	void StreamStop();
 	void StreamPause();
 	void StreamPlayNext();
+
+	//percent 0..100
 	void StreamSetPosition(double percent);
 
 	int GetLastError();
@@ -70,5 +64,13 @@ private:
 	//returns handle for manipulating stream when successed
 	//else returns 0
 	HMUSIC LoadMusicForPlaying(musicFile* fileToPlay);
+
+
+	//if percent == -1, music will be paused, if it plays,
+	//			will be played, if it pauses,
+	//			else won't do anything
+	//if percent != -1, music will play from next position:
+	//			percent * music_file_length			  
+	void StreamPlayFromPosition(double percent);
 };
 

@@ -33,7 +33,6 @@ private:
 	HWND parentWindow;
 	int max, min;
 	int currentState;
-	//RECT slider;
 	BOOL isSliderVisible;
 	RECT barRect;
 	BitMapImage * sliderImage;

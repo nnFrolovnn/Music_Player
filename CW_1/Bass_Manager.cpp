@@ -103,13 +103,10 @@ void Bass_Manager::StreamPlayNext()
 
 void Bass_Manager::StreamSetPosition(double percent)
 {
-	if (stream != 0)
+	if (stream != 0 && percent >= 0 && percent <= 100)
 	{
-		BASS_StreamFree(stream);
-
-		stream = BASS_StreamCreateFile(FALSE, playList[currentMusicFile].filePath, percent * playList[currentMusicFile].fileSize, 0, 0);
-		int err = GetLastError();
-		BASS_ChannelPlay(stream, FALSE);
+		StreamStop();
+		StreamPlayFromPosition(percent);
 	}
 }
 
