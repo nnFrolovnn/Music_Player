@@ -23,6 +23,7 @@ public:
 
 	BOOL MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	void Draw(HDC hdc, LPARAM lParam);
+
 private:
 	int width, height;
 	POINT leftCenterPoint;

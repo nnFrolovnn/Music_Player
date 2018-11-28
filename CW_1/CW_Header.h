@@ -11,9 +11,11 @@
 #define CW_TRACKBAR_Y (int)(CW_WINDOW_HEIGHT/2.0)+60
 #define CW_TRACKBAR_MIN 0
 #define CW_TRACKBAR_MAX 100
+#define CW_TRACKBAR_IDENTIFIER 1
+#define CW_VOLUMEBAR_IDENTIFIER 2
+
 
 #define CW_IMAGE_MENU_TOP CW_TRACKBAR_Y+CW_TRACKBAR_HEIGHT
-#define TRANSPARENT_COLOR 0x00FFFFFF
 #define CW_IMAGE_PLAY_PATH "resources//play.bmp"
 #define CW_IMAGE_FORWARD_PATH "recources//ff.bmp"
 #define CW_IMAGE_REWIND_PATH "recources//rewind.bmp"

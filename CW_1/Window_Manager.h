@@ -33,7 +33,6 @@ private:
 	BitMapImage* images;
 	BitMapImage * selectedImage;
 	TrackBar* trackBar;
-	TrackBar* volumeBar;
 
 	void OnTimer(HWND hwnd, int timerID);
 	char* OpenFile(HWND hwnd);

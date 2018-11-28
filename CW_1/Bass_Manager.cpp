@@ -11,6 +11,7 @@ Bass_Manager::Bass_Manager()
 	BOOL init = BASS_Init(-1, 44100, BASS_DEVICE_STEREO | BASS_DEVICE_3D , 0, 0);
 	BOOL initmod = BASSMOD_Init(-1, 44100, BASS_DEVICE_STEREO | BASS_DEVICE_3D);
 }
+
 Bass_Manager::Bass_Manager(HWND hwnd)
 {
 	stream = 0;
@@ -42,7 +43,7 @@ void Bass_Manager::StreamPlayFromPosition(double percent)
 		{
 			/*stream = BASS_StreamCreateFile(FALSE, playList[currentMusicFile].filePath, 
 										   playList[currentMusicFile].fileSize * percent, 0, 0);*/
-			stream = LoadMusicForPlaying(&playList[currentMusicFile]);
+			stream = LoadMusicForPlaying(&playList[currentMusicFile], percent);
 			if (stream > 0) 
 			{
 				BASS_ChannelPlay(stream, TRUE);
@@ -232,14 +233,14 @@ void * Bass_Manager::LoadMusicFileToMemory(musicFile* mFile)
 	return nullptr;
 }
 
-HMUSIC Bass_Manager::LoadMusicForPlaying(musicFile* fileToPlay)
+HMUSIC Bass_Manager::LoadMusicForPlaying(musicFile* fileToPlay, double percent)
 {
 	HMUSIC music = 0;
 	//int err = 0;
 	if (fileToPlay != NULL)
 	{
 
-		music = BASSMOD_MusicLoad(FALSE, fileToPlay->filePath, 0, 0,
+		music = BASSMOD_MusicLoad(FALSE, fileToPlay->filePath, percent*fileToPlay->fileSize, 0,
 			BASS_MUSIC_LOOP | BASS_MUSIC_RAMPS | BASS_MUSIC_SURROUND | BASS_UNICODE);
 		//err = BASS_ErrorGetCode();
 
@@ -255,7 +256,7 @@ HMUSIC Bass_Manager::LoadMusicForPlaying(musicFile* fileToPlay)
 			{
 				//music = BASS_MusicLoad(TRUE, fileInMemory, 0, *filesize, BASS_MUSIC_LOOP | BASS_MUSIC_RAMPS | BASS_MUSIC_SURROUND | BASS_UNICODE, 0);
 				//err = BASS_ErrorGetCode();
-				music = BASSMOD_MusicLoad(TRUE, fileInMemory, 0, *filesize, 
+				music = BASSMOD_MusicLoad(TRUE, fileInMemory, percent*fileToPlay->fileSize, *filesize,
 					BASS_MUSIC_LOOP | BASS_MUSIC_RAMPS | BASS_MUSIC_SURROUND | BASS_UNICODE);
 				//err = BASS_ErrorGetCode();
 
@@ -266,7 +267,7 @@ HMUSIC Bass_Manager::LoadMusicForPlaying(musicFile* fileToPlay)
 					{
 						//music = BASS_MusicLoad(TRUE, fileInMemory, 0, *filesize, BASS_MUSIC_LOOP | BASS_MUSIC_RAMPS | BASS_MUSIC_SURROUND | BASS_UNICODE, 0);
 						//err = BASS_ErrorGetCode();
-						music = BASSMOD_MusicLoad(TRUE, fileInMemory, 0, *filesize,
+						music = BASSMOD_MusicLoad(TRUE, fileInMemory, percent*fileToPlay->fileSize, *filesize,
 							BASS_MUSIC_LOOP | BASS_MUSIC_RAMPS | BASS_MUSIC_SURROUND | BASS_UNICODE);
 						//err = BASS_ErrorGetCode();
 					}
@@ -276,7 +277,7 @@ HMUSIC Bass_Manager::LoadMusicForPlaying(musicFile* fileToPlay)
 
 		if (music == 0)
 		{
-			music = BASS_StreamCreateFile(FALSE, fileToPlay->filePath, 0, 0, 0);
+			music = BASS_StreamCreateFile(FALSE, fileToPlay->filePath, percent*fileToPlay->fileSize, 0, 0);
 			//err = GetLastError();
 		}
 	}

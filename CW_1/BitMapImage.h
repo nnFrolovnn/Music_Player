@@ -1,6 +1,8 @@
 #pragma once
 #include <Windows.h>
-#include "CW_Header.h"
+//#include "CW_Header.h"
+
+#define TRANSPARENT_COLOR 0x00FFFFFF
 
 class BitMapImage
 {

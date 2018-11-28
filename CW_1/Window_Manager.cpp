@@ -19,10 +19,7 @@ LRESULT Window_Manager::MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 	{
 		handled = trackBar->MainWindowProc(hWnd, uMsg, wParam, lParam);
 	}
-	if (volumeBar != NULL)
-	{
-		handled = volumeBar->MainWindowProc(hWnd, uMsg, wParam, lParam);
-	}
+
 	if (!handled)
 	{
 		switch (uMsg)
@@ -138,10 +135,8 @@ void Window_Manager::OnCreate(HWND hwnd)
 	DragAcceptFiles(hwnd, TRUE);
 
 	bass_manager = new Bass_Manager(hwnd);
-
 	trackBar = new TrackBar(hwnd, CW_TRACKBAR_X, CW_TRACKBAR_Y, CW_TRACKBAR_WIDTH, CW_TRACKBAR_MIN, CW_TRACKBAR_MAX);
 	trackBarHwnd = hwnd;
-	volumeBar = new TrackBar(hwnd, 430, CW_IMAGE_MENU_TOP + 30, 50, 0, 100);
 
 	ShowWindow(trackBarHwnd, SW_SHOWNORMAL);
 
@@ -161,33 +156,19 @@ void Window_Manager::OnPaint(HWND hwnd, LPARAM lParam)
 {
 	PAINTSTRUCT ps;
 	HDC hdc = BeginPaint(hwnd, &ps);
-	HDC tempDC = CreateCompatibleDC(hdc);
-
-	RECT rect;
-	rect.left = rect.right = rect.top = rect.bottom = 0;
-	GetWindowRect(hwnd, &rect);
-	HBITMAP tempBitMap = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
-	SelectObject(tempDC, tempBitMap);
-
-	FillRect(tempDC, &rect, (HBRUSH)7);
-	//BitBlt(tempDC, 0, 0, rect.right, rect.bottom, hdc, 0, 0, SRCCOPY);
 
 	if (lParam != PAINT_MESS_FROM_TRACKBAR)
 	{
 		for (int i = IMAGES_COUNT - 1; i >= 0; i--)
 		{
-			images[i].Draw(tempDC);
+			images[i].Draw(hdc);
 		}
 	}
-	trackBar->Draw(tempDC, lParam);
-	volumeBar->Draw(tempDC, lParam);
+	trackBar->Draw(hdc, lParam);
 
-	BitBlt(hdc, 0, 0, rect.right, rect.bottom, tempDC, 0, 0, SRCCOPY);
 	EndPaint(hwnd, &ps);
-	
-	//DeleteObject(tempBitMap);
-	DeleteDC(tempDC);
-	DeleteDC(hdc);
+	ValidateRect(hwnd, NULL);
+
 }
 
 void Window_Manager::OnLButtonDown(HWND hwnd, LPARAM lParam)

@@ -1,4 +1,4 @@
-﻿  Window_Manager.cpp
+﻿  Bass_Manager.cpp
 d:\учеба\5 семестр\курсовая\cw_1\cw_1\bass_cmponents\bassmod.h(65): warning C4005: BASS_MUSIC_RAMP: изменение макроопределения
   d:\учеба\5 семестр\курсовая\cw_1\packages\bass.2.4.12.1\build\native\include\bass.h(303): note: см. предыдущее определение "BASS_MUSIC_RAMP"
 d:\учеба\5 семестр\курсовая\cw_1\cw_1\bass_cmponents\bassmod.h(66): warning C4005: BASS_MUSIC_RAMPS: изменение макроопределения
@@ -25,7 +25,12 @@ d:\учеба\5 семестр\курсовая\cw_1\cw_1\bass_cmponents\bassmod
   d:\учеба\5 семестр\курсовая\cw_1\packages\bass.2.4.12.1\build\native\include\bass.h(315): note: см. предыдущее определение "BASS_MUSIC_NOSAMPLE"
 d:\учеба\5 семестр\курсовая\cw_1\cw_1\bass_cmponents\bassmod.h(82): warning C4005: BASS_SYNC_MUSICPOS: изменение макроопределения
   d:\учеба\5 семестр\курсовая\cw_1\packages\bass.2.4.12.1\build\native\include\bass.h(545): note: см. предыдущее определение "BASS_SYNC_MUSICPOS"
-d:\учеба\5 семестр\курсовая\cw_1\cw_1\window_manager.cpp(296): warning C4018: <: несоответствие типов со знаком и без знака
-d:\учеба\5 семестр\курсовая\cw_1\cw_1\window_manager.cpp(332): warning C4018: <: несоответствие типов со знаком и без знака
-d:\учеба\5 семестр\курсовая\cw_1\cw_1\window_manager.cpp(339): warning C4244: =: преобразование "long" в "char", возможна потеря данных
+d:\учеба\5 семестр\курсовая\cw_1\cw_1\bass_manager.cpp(216): warning C4244: инициализация: преобразование "QWORD" в "unsigned int", возможна потеря данных
+d:\учеба\5 семестр\курсовая\cw_1\cw_1\bass_manager.cpp(224): warning C4244: аргумент: преобразование "const QWORD" в "::size_t", возможна потеря данных
+d:\учеба\5 семестр\курсовая\cw_1\cw_1\bass_manager.cpp(224): warning C4244: аргумент: преобразование "QWORD" в "::size_t", возможна потеря данных
+d:\учеба\5 семестр\курсовая\cw_1\cw_1\bass_manager.cpp(243): warning C4244: аргумент: преобразование "double" в "DWORD", возможна потеря данных
+d:\учеба\5 семестр\курсовая\cw_1\cw_1\bass_manager.cpp(253): warning C4244: =: преобразование "QWORD" в "unsigned int", возможна потеря данных
+d:\учеба\5 семестр\курсовая\cw_1\cw_1\bass_manager.cpp(259): warning C4244: аргумент: преобразование "double" в "DWORD", возможна потеря данных
+d:\учеба\5 семестр\курсовая\cw_1\cw_1\bass_manager.cpp(270): warning C4244: аргумент: преобразование "double" в "DWORD", возможна потеря данных
+d:\учеба\5 семестр\курсовая\cw_1\cw_1\bass_manager.cpp(280): warning C4244: аргумент: преобразование "double" в "QWORD", возможна потеря данных
   CW_1.vcxproj -> D:\учеба\5 семестр\Курсовая\CW_1\Debug\CW_1.exe

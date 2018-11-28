@@ -63,7 +63,7 @@ private:
 	//
 	//returns handle for manipulating stream when successed
 	//else returns 0
-	HMUSIC LoadMusicForPlaying(musicFile* fileToPlay);
+	HMUSIC LoadMusicForPlaying(musicFile* fileToPlay, double percent);
 
 
 	//if percent == -1, music will be paused, if it plays,
