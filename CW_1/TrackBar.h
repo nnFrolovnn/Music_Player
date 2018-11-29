@@ -24,6 +24,7 @@ public:
 	BOOL MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	void Draw(HDC hdc, LPARAM lParam);
 
+	RECT GetTrackBarRect();
 private:
 	int width, height;
 	POINT leftCenterPoint;

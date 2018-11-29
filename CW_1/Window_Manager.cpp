@@ -14,6 +14,7 @@ Window_Manager::Window_Manager()
 LRESULT Window_Manager::MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	BOOL handled = FALSE;
+
 	//is message for trackbar
 	if (trackBar != NULL)
 	{
@@ -25,6 +26,8 @@ LRESULT Window_Manager::MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 		switch (uMsg)
 		{
 		case WM_CREATE:
+			//SetWindowLong(hWnd, GWL_EXSTYLE, 0x80000);
+			//SetLayeredWindowAttributes(hWnd, 0, (255 * 70) / 100, LWA_ALPHA);
 			OnCreate(hWnd);
 			break;
 		case WM_RBUTTONDOWN:
@@ -41,6 +44,7 @@ LRESULT Window_Manager::MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			PostQuitMessage(0);
 			break;
 		case WM_PAINT:
+
 			OnPaint(hWnd, lParam);
 			break;
 		case WM_TIMER:
@@ -83,6 +87,16 @@ void Window_Manager::OnTimer(HWND hwnd, int timerID)
 		else
 		{
 			KillTimer(hwnd, TIMER_1);
+			/* TODO when music finished play next or stop
+			if (bass_manager->MusicIsPlayingOrIsPaused())
+			{
+				bass_manager->StreamPlayNext();
+				currentTrackTime = 0;
+				trackTime = bass_manager->GetStreamTime();
+				SendMessage(trackBarHwnd, TBM_SETPOS, TRUE, (int)((currentTrackTime / trackTime) * 100));
+				SetTimer(hwnd, TIMER_1, 1000, NULL);
+			}
+			*/
 		}
 		break;
 	}
@@ -147,7 +161,7 @@ void Window_Manager::OnCreate(HWND hwnd)
 	images[2] = BitMapImage(CW_NUMBER_PLAY_BUTTON, 225, CW_IMAGE_MENU_TOP, CW_IMAGE_PLAY_PATH);
 	images[3] = BitMapImage(CW_NUMBER_FAST_F_BUTTON, 280, CW_IMAGE_MENU_TOP, CW_IMAGE_FORWARD_PATH);
 	images[4] = BitMapImage(CW_NUMBER_STOP_BUTTON, 335, CW_IMAGE_MENU_TOP, CW_IMAGE_STOP_PATH);
-	images[5] = BitMapImage(CW_NUMBER_RESUME_BUTTON, 225, CW_IMAGE_MENU_TOP, CW_IMAGE_PAUSE_PATH);
+	images[5] = BitMapImage(CW_NUMBER_PAUSE_BUTTON, 225, CW_IMAGE_MENU_TOP, CW_IMAGE_PAUSE_PATH);
 
 	images[5].SetVisible(FALSE);
 }
@@ -156,19 +170,36 @@ void Window_Manager::OnPaint(HWND hwnd, LPARAM lParam)
 {
 	PAINTSTRUCT ps;
 	HDC hdc = BeginPaint(hwnd, &ps);
+	HDC tempDC = CreateCompatibleDC(hdc);
 
-	if (lParam != PAINT_MESS_FROM_TRACKBAR)
+	RECT rect;
+	rect.left = rect.right = rect.top = rect.bottom = 0;
+	GetWindowRect(hwnd, &rect);
+	OffsetRect(&rect, -rect.left, -rect.top);
+	//HBITMAP tempBitMap = CreateBitmap(rect.right, rect.bottom, 1, 32, NULL);
+	HBITMAP tempBitMap = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
+	SelectObject(tempDC, tempBitMap);
+
+	FillRect(tempDC, &rect, (HBRUSH)7);
+	//BitBlt(tempDC, 0, 0, rect.right, rect.bottom, hdc, 0, 0, SRCCOPY);
+
+	for (int i = IMAGES_COUNT - 1; i >= 0; i--)
 	{
-		for (int i = IMAGES_COUNT - 1; i >= 0; i--)
-		{
-			images[i].Draw(hdc);
-		}
+		images[i].Draw(tempDC);
 	}
-	trackBar->Draw(hdc, lParam);
 
-	EndPaint(hwnd, &ps);
+	//FillRect(tempDC, &trackBar->GetTrackBarRect(), (HBRUSH)7);
+	trackBar->Draw(tempDC, lParam);
+	
+	BitBlt(hdc, 0, 0, rect.right, rect.bottom, tempDC, 0, 0, SRCCOPY);
+
 	ValidateRect(hwnd, NULL);
+	EndPaint(hwnd, &ps);
 
+
+	DeleteObject(tempBitMap);
+	DeleteDC(tempDC);
+	DeleteDC(hdc);
 }
 
 void Window_Manager::OnLButtonDown(HWND hwnd, LPARAM lParam)
@@ -213,7 +244,14 @@ void Window_Manager::OnLButtonUp(HWND hwnd, LPARAM lParam)
 		case CW_NUMBER_PLAY_LIST_BUTTON:
 			break;
 		case CW_NUMBER_REWIND_BUTTON:
-
+			if (bass_manager->MusicIsPlayingOrIsPaused())
+			{
+				bass_manager->StreamPlayPrevios();
+				currentTrackTime = 0;
+				trackTime = bass_manager->GetStreamTime();
+				SendMessage(trackBarHwnd, TBM_SETPOS, TRUE, (int)((currentTrackTime / trackTime) * 100));
+				SetTimer(hwnd, TIMER_1, 1000, NULL);
+			}
 			break;
 		case CW_NUMBER_PLAY_BUTTON:
 			selectedImage->SetVisible(FALSE);
@@ -251,8 +289,10 @@ void Window_Manager::OnLButtonUp(HWND hwnd, LPARAM lParam)
 				trackTime = 0;
 			}
 			bass_manager->StreamStop();
+			images[2].SetVisible(TRUE);
+			images[5].SetVisible(FALSE);
 			break;
-		case CW_NUMBER_RESUME_BUTTON:
+		case CW_NUMBER_PAUSE_BUTTON:
 			if (bass_manager->MusicHasPlayed())
 			{
 				KillTimer(hwnd, TIMER_1);

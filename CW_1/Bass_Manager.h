@@ -31,6 +31,7 @@ public:
 	void StreamStop();
 	void StreamPause();
 	void StreamPlayNext();
+	void StreamPlayPrevios();
 
 	//percent 0..100
 	void StreamSetPosition(double percent);
@@ -63,7 +64,7 @@ private:
 	//
 	//returns handle for manipulating stream when successed
 	//else returns 0
-	HMUSIC LoadMusicForPlaying(musicFile* fileToPlay, double percent);
+	HMUSIC LoadMusicForPlaying(musicFile* fileToPlay, double percent, BOOL sameFile = FALSE);
 
 
 	//if percent == -1, music will be paused, if it plays,

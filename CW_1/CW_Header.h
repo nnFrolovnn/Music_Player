@@ -28,7 +28,7 @@
 #define CW_NUMBER_PLAY_BUTTON 3
 #define CW_NUMBER_FAST_F_BUTTON 4
 #define CW_NUMBER_STOP_BUTTON 5
-#define CW_NUMBER_RESUME_BUTTON 6
+#define CW_NUMBER_PAUSE_BUTTON 6
 
 
 //second way to do
