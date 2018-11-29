@@ -19,12 +19,14 @@ class TrackBar
 public:
 	TrackBar();
 	TrackBar(HWND hwnd, int x, int y, int width);
-	TrackBar(HWND hwnd, int x, int y, int width, int min, int max);
+	TrackBar(HWND hwnd, int x, int y, int width, int min, int max, int identifier);
 
-	BOOL MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	void Draw(HDC hdc, LPARAM lParam);
+	BOOL MainWindowProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
+	void Draw(HDC hdc);
 
 	RECT GetTrackBarRect();
+	HWND GetHWND();
+	int  GetIdentifier();
 private:
 	int width, height;
 	POINT leftCenterPoint;
@@ -32,17 +34,18 @@ private:
 
 	BOOL isPressed;
 
-	HWND parentWindow;
+	HWND parentHwnd;
 	int max, min;
+	int identifier;
 	int currentState;
 	BOOL isSliderVisible;
 	RECT barRect;
 	BitMapImage * sliderImage;
 
-	BOOL OnButtonDown(HWND hWnd, LPARAM lParam);
-	BOOL OnButtonUp(HWND hWnd, LPARAM lParam);
+	BOOL OnButtonDown(LPARAM lParam);
+	BOOL OnButtonUp(LPARAM lParam);
 
-	void OnMouseMove(HWND hWnd, LPARAM lParam);
+	void OnMouseMove(LPARAM lParam);
 	
 };
 

@@ -121,6 +121,17 @@ void Bass_Manager::StreamSetPosition(double percent)
 	}
 }
 
+void Bass_Manager::StreamSetVolume(double volume)
+{
+	if (MusicIsPlayingOrIsPaused())
+	{
+		if (volume >= 0 && volume <= 1)
+		{
+			BASS_SetVolume(volume);
+		}
+	}
+}
+
 int Bass_Manager::GetLastError()
 {
 	return BASS_ErrorGetCode();
@@ -251,8 +262,11 @@ HMUSIC Bass_Manager::LoadMusicForPlaying(musicFile* fileToPlay, double percent, 
 	{
 		try
 		{
-			music = BASSMOD_MusicLoad(FALSE, fileToPlay->filePath, percent*fileToPlay->fileSize, 0,
-				BASS_MUSIC_LOOP | BASS_MUSIC_RAMPS | BASS_MUSIC_SURROUND | BASS_UNICODE);
+			music = BASS_MusicLoad(FALSE, fileToPlay->filePath, percent*fileToPlay->fileSize, 0,
+				BASS_MUSIC_LOOP | BASS_MUSIC_RAMPS | BASS_MUSIC_SURROUND | BASS_UNICODE, 0);
+
+			//music = BASSMOD_MusicLoad(FALSE, fileToPlay->filePath, percent*fileToPlay->fileSize, 0,
+			//	BASS_MUSIC_LOOP | BASS_MUSIC_RAMPS | BASS_MUSIC_SURROUND | BASS_UNICODE);
 			//err = BASS_ErrorGetCode();
 
 			//it is a MO3 music or not a music file
@@ -265,10 +279,10 @@ HMUSIC Bass_Manager::LoadMusicForPlaying(musicFile* fileToPlay, double percent, 
 
 				if (fileInMemory != nullptr && filesize != NULL)
 				{
-					//music = BASS_MusicLoad(TRUE, fileInMemory, 0, *filesize, BASS_MUSIC_LOOP | BASS_MUSIC_RAMPS | BASS_MUSIC_SURROUND | BASS_UNICODE, 0);
+					music = BASS_MusicLoad(TRUE, fileInMemory, percent*fileToPlay->fileSize, *filesize, BASS_MUSIC_LOOP | BASS_MUSIC_RAMPS | BASS_MUSIC_SURROUND | BASS_UNICODE, 0);
 					//err = BASS_ErrorGetCode();
-					music = BASSMOD_MusicLoad(TRUE, fileInMemory, percent*fileToPlay->fileSize, *filesize,
-						BASS_MUSIC_LOOP | BASS_MUSIC_RAMPS | BASS_MUSIC_SURROUND | BASS_UNICODE);
+					//music = BASSMOD_MusicLoad(TRUE, fileInMemory, percent*fileToPlay->fileSize, *filesize,
+					//	BASS_MUSIC_LOOP | BASS_MUSIC_RAMPS | BASS_MUSIC_SURROUND | BASS_UNICODE);
 					//err = BASS_ErrorGetCode();
 
 					if (music == 0)
@@ -276,10 +290,10 @@ HMUSIC Bass_Manager::LoadMusicForPlaying(musicFile* fileToPlay, double percent, 
 						int decode = UNMO3_Decode(&fileInMemory, filesize, 0);
 						if (decode != 3)
 						{
-							//music = BASS_MusicLoad(TRUE, fileInMemory, 0, *filesize, BASS_MUSIC_LOOP | BASS_MUSIC_RAMPS | BASS_MUSIC_SURROUND | BASS_UNICODE, 0);
+							music = BASS_MusicLoad(TRUE, fileInMemory, percent*fileToPlay->fileSize, *filesize, BASS_MUSIC_LOOP | BASS_MUSIC_RAMPS | BASS_MUSIC_SURROUND | BASS_UNICODE, 0);
 							//err = BASS_ErrorGetCode();
-							music = BASSMOD_MusicLoad(TRUE, fileInMemory, percent*(*filesize), *filesize,
-								BASS_MUSIC_LOOP | BASS_MUSIC_RAMPS | BASS_MUSIC_SURROUND | BASS_UNICODE);
+							//music = BASSMOD_MusicLoad(TRUE, fileInMemory, percent*(*filesize), *filesize,
+							//	BASS_MUSIC_LOOP | BASS_MUSIC_RAMPS | BASS_MUSIC_SURROUND | BASS_UNICODE);
 							//err = BASS_ErrorGetCode();
 						}
 						free(fileInMemory);
@@ -290,7 +304,7 @@ HMUSIC Bass_Manager::LoadMusicForPlaying(musicFile* fileToPlay, double percent, 
 
 			if (music == 0)
 			{
-				music = BASS_StreamCreateFile(FALSE, fileToPlay->filePath, percent*fileToPlay->fileSize, 0, 0);
+				music = BASS_StreamCreateFile(FALSE, fileToPlay->filePath, percent*fileToPlay->fileSize, BASS_MUSIC_LOOP | BASS_MUSIC_RAMPS | BASS_MUSIC_SURROUND | BASS_UNICODE, 0);
 			}
 		}
 		catch(...)

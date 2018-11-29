@@ -26,16 +26,17 @@ public:
 
 private:
 	Bass_Manager* bass_manager;
-	HINSTANCE hinstance;
-	HWND trackBarHwnd;
-	double trackTime;
-	double currentTrackTime;
 	BitMapImage* images;
-	BitMapImage * selectedImage;
+	BitMapImage * selectedButton;
 	TrackBar* trackBar;
+	TrackBar* volumeBar;
 
+	HINSTANCE hinstance;
+
+	double trackTime, currentTrackTime;
+	
 	void OnTimer(HWND hwnd, int timerID);
-	char* OpenFile(HWND hwnd);
+	char* GetFilePath(HWND hwnd);
 	void OnMusicLoad(HWND hwnd);
 	void OnCreate(HWND hwnd);
 	void OnPaint(HWND hwnd, LPARAM lParam);
@@ -44,5 +45,7 @@ private:
 	void OnDropFiles(HWND hwnd, WPARAM wParam);
 	void OnScroll(HWND hwnd, WPARAM wParam, LPARAM lParam);
 	char* TimeToString(long time);
+
+	
 };
 

@@ -33,8 +33,10 @@ public:
 	void StreamPlayNext();
 	void StreamPlayPrevios();
 
-	//percent 0..100
+	//percent 0..1
 	void StreamSetPosition(double percent);
+	//volume  0..1
+	void StreamSetVolume(double volume);
 
 	int GetLastError();
 	char* GetStreamInfo();
@@ -57,21 +59,15 @@ private:
 
 	//
 	//loads data from file to memory
-	//if it successes will return pointer to first byte
-	//else will return nullptr
+	//returns pointer to the first byte
+	//else returns nullptr
 	void * LoadMusicFileToMemory(musicFile* mFile);
 
 	//
 	//returns handle for manipulating stream when successed
 	//else returns 0
 	HMUSIC LoadMusicForPlaying(musicFile* fileToPlay, double percent, BOOL sameFile = FALSE);
-
-
-	//if percent == -1, music will be paused, if it plays,
-	//			will be played, if it pauses,
-	//			else won't do anything
-	//if percent != -1, music will play from next position:
-	//			percent * music_file_length			  
+		  
 	void StreamPlayFromPosition(double percent);
 };
 

@@ -2,23 +2,29 @@
 
 Window_Manager::Window_Manager()
 {
-	trackBarHwnd = NULL;
 	trackTime = 0;
-	trackBar = NULL;
 	currentTrackTime = 0;
 	images = NULL;
-	selectedImage = NULL;
+	selectedButton = NULL;
+	trackBar = NULL;
+	volumeBar = NULL;
 	bass_manager = NULL;
 }
 
 LRESULT Window_Manager::MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	BOOL handled = FALSE;
-
+	POINT point;
+	
 	//is message for trackbar
 	if (trackBar != NULL)
 	{
-		handled = trackBar->MainWindowProc(hWnd, uMsg, wParam, lParam);
+		handled = trackBar->MainWindowProc(uMsg, wParam, lParam);
+	}
+	//is message for volumeBar
+	if (!handled && volumeBar != NULL )
+	{
+		handled = volumeBar->MainWindowProc(uMsg, wParam, lParam);
 	}
 
 	if (!handled)
@@ -44,7 +50,6 @@ LRESULT Window_Manager::MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			PostQuitMessage(0);
 			break;
 		case WM_PAINT:
-
 			OnPaint(hWnd, lParam);
 			break;
 		case WM_TIMER:
@@ -52,6 +57,15 @@ LRESULT Window_Manager::MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			break;
 		case WM_DROPFILES:
 			OnDropFiles(hWnd, wParam);
+			break;
+		case WM_MOUSEMOVE:
+			point.x = LOWORD(lParam);
+			point.y = HIWORD(lParam);
+
+			if (point.y < 200)
+			{
+				SetWindowPos(hWnd, HWND_TOP, point.x, point.y, 500, 300, SWP_SHOWWINDOW);
+			}
 			break;
 		case WM_HSCROLL:
 			OnScroll(hWnd, wParam, lParam);
@@ -81,7 +95,7 @@ void Window_Manager::OnTimer(HWND hwnd, int timerID)
 		if (trackTime > currentTrackTime)
 		{
 			currentTrackTime++;
-			SendMessage(trackBarHwnd, TBM_SETPOS, TRUE, (int)((currentTrackTime / trackTime) * 100));
+			SendMessage(trackBar->GetHWND(), TBM_SETPOS, TRUE, (int)((currentTrackTime / trackTime) * 100));
 			InvalidateRect(hwnd, NULL, true);
 		}
 		else
@@ -102,7 +116,7 @@ void Window_Manager::OnTimer(HWND hwnd, int timerID)
 	}
 }
 
-char* Window_Manager::OpenFile(HWND hwnd)
+char* Window_Manager::GetFilePath(HWND hwnd)
 {
 	OPENFILENAME openFileDialog;
 	char szDirect[MAX_PATH];
@@ -140,7 +154,7 @@ char* Window_Manager::OpenFile(HWND hwnd)
 
 void Window_Manager::OnMusicLoad(HWND hwnd)
 {
-	char* file = OpenFile(hwnd);
+	char* file = GetFilePath(hwnd);
 	bass_manager->AddFileNameToList(file);
 }
 
@@ -149,10 +163,8 @@ void Window_Manager::OnCreate(HWND hwnd)
 	DragAcceptFiles(hwnd, TRUE);
 
 	bass_manager = new Bass_Manager(hwnd);
-	trackBar = new TrackBar(hwnd, CW_TRACKBAR_X, CW_TRACKBAR_Y, CW_TRACKBAR_WIDTH, CW_TRACKBAR_MIN, CW_TRACKBAR_MAX);
-	trackBarHwnd = hwnd;
-
-	ShowWindow(trackBarHwnd, SW_SHOWNORMAL);
+	trackBar = new TrackBar(hwnd, CW_TRACKBAR_X, CW_TRACKBAR_Y, CW_TRACKBAR_WIDTH, CW_TRACKBAR_MIN, CW_TRACKBAR_MAX, CW_TRACKBAR_IDENTIFIER);
+	volumeBar = new TrackBar(hwnd, CW_WINDOW_WIDTH - 80, CW_IMAGE_MENU_TOP + 25, 50, CW_TRACKBAR_MIN, CW_TRACKBAR_MAX, CW_VOLUMEBAR_IDENTIFIER);
 
 	images = new BitMapImage[IMAGES_COUNT];
 
@@ -172,31 +184,34 @@ void Window_Manager::OnPaint(HWND hwnd, LPARAM lParam)
 	HDC hdc = BeginPaint(hwnd, &ps);
 	HDC tempDC = CreateCompatibleDC(hdc);
 
+	// get window size
 	RECT rect;
 	rect.left = rect.right = rect.top = rect.bottom = 0;
 	GetWindowRect(hwnd, &rect);
 	OffsetRect(&rect, -rect.left, -rect.top);
-	//HBITMAP tempBitMap = CreateBitmap(rect.right, rect.bottom, 1, 32, NULL);
+
+	// set region to draw
 	HBITMAP tempBitMap = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
 	SelectObject(tempDC, tempBitMap);
-
 	FillRect(tempDC, &rect, (HBRUSH)7);
-	//BitBlt(tempDC, 0, 0, rect.right, rect.bottom, hdc, 0, 0, SRCCOPY);
 
+	// draw buttons
 	for (int i = IMAGES_COUNT - 1; i >= 0; i--)
 	{
 		images[i].Draw(tempDC);
 	}
 
-	//FillRect(tempDC, &trackBar->GetTrackBarRect(), (HBRUSH)7);
-	trackBar->Draw(tempDC, lParam);
-	
+	// draw bars
+	trackBar->Draw(tempDC);
+	volumeBar->Draw(tempDC);
+
+	// load drawn region
 	BitBlt(hdc, 0, 0, rect.right, rect.bottom, tempDC, 0, 0, SRCCOPY);
 
 	ValidateRect(hwnd, NULL);
 	EndPaint(hwnd, &ps);
 
-
+	// free resourses
 	DeleteObject(tempBitMap);
 	DeleteDC(tempDC);
 	DeleteDC(hdc);
@@ -204,11 +219,14 @@ void Window_Manager::OnPaint(HWND hwnd, LPARAM lParam)
 
 void Window_Manager::OnLButtonDown(HWND hwnd, LPARAM lParam)
 {
-	selectedImage = NULL;
+	selectedButton = NULL;
+
+	// coordinates
 	POINT point;
 	point.x = LOWORD(lParam);
 	point.y = HIWORD(lParam);
 
+	// check is button selected
 	for (int i = 0; i < IMAGES_COUNT; i++)
 	{
 		int left = images[i].GetLeft();
@@ -218,15 +236,16 @@ void Window_Manager::OnLButtonDown(HWND hwnd, LPARAM lParam)
 			int top = images[i].GetTop();
 			if (top + 5 <= point.y && top + images[i].GetHeight() - 5 >= point.y)
 			{
-				selectedImage = &(images[i]);
+				selectedButton = &(images[i]);
 				break;
 			}
 		}
 	}
 
-	if (selectedImage != NULL)
+	// if button selected
+	if (selectedButton != NULL)
 	{
-		selectedImage->Move(ADD_ONCLICK_X, ADD_ONCLICK_Y);
+		selectedButton->Move(ADD_ONCLICK_X, ADD_ONCLICK_Y);
 		InvalidateRect(hwnd, NULL, true);
 	}
 }
@@ -235,11 +254,14 @@ void Window_Manager::OnLButtonUp(HWND hwnd, LPARAM lParam)
 {
 	BOOL hasPlayed = TRUE;
 
-	if (selectedImage != NULL)
+	// if button was clicked
+	if (selectedButton != NULL)
 	{
-		selectedImage->Move(-ADD_ONCLICK_X, -ADD_ONCLICK_Y);
+		// return default state to button
+		selectedButton->Move(-ADD_ONCLICK_X, -ADD_ONCLICK_Y);
 
-		switch (selectedImage->GetNumber())
+		// define which button was selected
+		switch (selectedButton->GetNumber())
 		{
 		case CW_NUMBER_PLAY_LIST_BUTTON:
 			break;
@@ -249,26 +271,28 @@ void Window_Manager::OnLButtonUp(HWND hwnd, LPARAM lParam)
 				bass_manager->StreamPlayPrevios();
 				currentTrackTime = 0;
 				trackTime = bass_manager->GetStreamTime();
-				SendMessage(trackBarHwnd, TBM_SETPOS, TRUE, (int)((currentTrackTime / trackTime) * 100));
+				SendMessage(trackBar->GetHWND(), TBM_SETPOS, TRUE, (int)((currentTrackTime / trackTime) * 100));
 				SetTimer(hwnd, TIMER_1, 1000, NULL);
 			}
 			break;
 		case CW_NUMBER_PLAY_BUTTON:
-			selectedImage->SetVisible(FALSE);
+			selectedButton->SetVisible(FALSE);
 			images[5].SetVisible(TRUE);
 
 			if (bass_manager->MusicCanPlay())
-			{
-				SetTimer(hwnd, TIMER_1, 1000, NULL);
+			{				
 				hasPlayed = bass_manager->MusicHasPlayed();
-			}
-			bass_manager->StreamPlay();
+				bass_manager->StreamPlay();
 
-			if (!hasPlayed)
-			{
-				currentTrackTime = 0;
-				trackTime = bass_manager->GetStreamTime();
+				if (!hasPlayed)
+				{
+					currentTrackTime = 0;
+					trackTime = bass_manager->GetStreamTime();
+				}
+
+				SetTimer(hwnd, TIMER_1, 1000, NULL);
 			}
+			
 			break;
 		case CW_NUMBER_FAST_F_BUTTON:
 			if (bass_manager->MusicIsPlayingOrIsPaused())
@@ -276,7 +300,7 @@ void Window_Manager::OnLButtonUp(HWND hwnd, LPARAM lParam)
 				bass_manager->StreamPlayNext();
 				currentTrackTime = 0;
 				trackTime = bass_manager->GetStreamTime();
-				SendMessage(trackBarHwnd, TBM_SETPOS, TRUE, (int)((currentTrackTime / trackTime) * 100));
+				SendMessage(trackBar->GetHWND(), TBM_SETPOS, TRUE, (int)((currentTrackTime / trackTime) * 100));
 				SetTimer(hwnd, TIMER_1, 1000, NULL);
 			}
 			break;
@@ -284,7 +308,7 @@ void Window_Manager::OnLButtonUp(HWND hwnd, LPARAM lParam)
 			if (bass_manager->MusicHasPlayed())
 			{
 				KillTimer(hwnd, TIMER_1);
-				SendMessage(trackBarHwnd, TBM_SETPOS, TRUE, 0);
+				SendMessage(trackBar->GetHWND(), TBM_SETPOS, TRUE, 0);
 				currentTrackTime = 0;
 				trackTime = 0;
 			}
@@ -298,12 +322,12 @@ void Window_Manager::OnLButtonUp(HWND hwnd, LPARAM lParam)
 				KillTimer(hwnd, TIMER_1);
 				bass_manager->StreamPlay();
 			}
-			selectedImage->SetVisible(FALSE);
+			selectedButton->SetVisible(FALSE);
 			images[2].SetVisible(TRUE);
 			break;
 		}
 
-		selectedImage = NULL;
+		selectedButton = NULL;
 		InvalidateRect(hwnd, NULL, true);
 	}
 }
@@ -313,7 +337,7 @@ void Window_Manager::OnDropFiles(HWND hwnd, WPARAM wParam)
 	HDROP hDrop = (HDROP)wParam;
 
 	TCHAR szFileName[MAX_PATH];
-	DWORD dwCount = DragQueryFile(hDrop, 0xFFFFFFFF, szFileName, MAX_PATH);
+	DWORD dwCount = DragQueryFileA(hDrop, 0xFFFFFFFF, szFileName, MAX_PATH);
 	for (int i = 0; i < dwCount; i++)
 	{
 		DragQueryFileA(hDrop, i, szFileName, MAX_PATH);
@@ -325,9 +349,9 @@ void Window_Manager::OnDropFiles(HWND hwnd, WPARAM wParam)
 
 void Window_Manager::OnScroll(HWND hwnd, WPARAM wParam, LPARAM lParam)
 {
-	//message from trackBar
-	if (wParam == lParam)
+	if (wParam == trackBar->GetIdentifier())
 	{
+		// find position in file to play
 		double percent = ((double)lParam - CW_TRACKBAR_MIN) / ((double)CW_TRACKBAR_MAX - CW_TRACKBAR_MIN);
 		currentTrackTime = percent * trackTime;
 
@@ -336,6 +360,13 @@ void Window_Manager::OnScroll(HWND hwnd, WPARAM wParam, LPARAM lParam)
 			bass_manager->StreamSetPosition(percent);
 		}
 	}
+	else if (wParam == volumeBar->GetIdentifier())
+	{
+		double percent = ((double)lParam - CW_TRACKBAR_MIN) / ((double)CW_TRACKBAR_MAX - CW_TRACKBAR_MIN);
+		
+		bass_manager->StreamSetVolume(percent);
+	}
+
 }
 
 char * Window_Manager::TimeToString(long time)
@@ -362,20 +393,3 @@ char * Window_Manager::TimeToString(long time)
 
 	return strTime;
 }
-
-/*HWND WINAPI Window_Manager::CreateTrackbar(HWND hwndDlg, UINT iMin, UINT iMax)
-{
-	HWND hwndTrack = CreateWindowEx(
-		0, TRACKBAR_CLASS, "Trackbar Control",
-		WS_CHILD, CW_TRACKBAR_X, CW_TRACKBAR_Y,
-		CW_TRACKBAR_WIDTH, CW_TRACKBAR_HEIGHT, hwndDlg, (HMENU)1010, hinstance, NULL);
-
-	SendMessage(hwndTrack, TBM_SETRANGE,
-		(WPARAM)TRUE,
-		(LPARAM)MAKELONG(iMin, iMax));
-
-	SendMessage(hwndTrack, TBM_SETPAGESIZE,
-		0, (LPARAM)1);
-
-	return hwndTrack;
-}*/
