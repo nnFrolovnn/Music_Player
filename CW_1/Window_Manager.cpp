@@ -59,13 +59,13 @@ LRESULT Window_Manager::MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			OnDropFiles(hWnd, wParam);
 			break;
 		case WM_MOUSEMOVE:
-			point.x = LOWORD(lParam);
+			/*point.x = LOWORD(lParam);
 			point.y = HIWORD(lParam);
 
 			if (point.y < 200)
 			{
 				SetWindowPos(hWnd, HWND_TOP, point.x, point.y, 500, 300, SWP_SHOWWINDOW);
-			}
+			}*/
 			break;
 		case WM_HSCROLL:
 			OnScroll(hWnd, wParam, lParam);
@@ -101,6 +101,10 @@ void Window_Manager::OnTimer(HWND hwnd, int timerID)
 		else
 		{
 			KillTimer(hwnd, TIMER_1);
+			currentTrackTime = 0;
+			trackTime = 0;
+			SendMessage(trackBar->GetHWND(), TBM_SETPOS, TRUE, 0);
+			InvalidateRect(hwnd, NULL, true);
 			/* TODO when music finished play next or stop
 			if (bass_manager->MusicIsPlayingOrIsPaused())
 			{
@@ -162,9 +166,14 @@ void Window_Manager::OnCreate(HWND hwnd)
 {
 	DragAcceptFiles(hwnd, TRUE);
 
+	RECT rect;
+	rect.left = rect.right = rect.top = rect.bottom = 0;
+	GetClientRect(hwnd, &rect);
+	OffsetRect(&rect, -rect.left, -rect.top);
+
 	bass_manager = new Bass_Manager(hwnd);
-	trackBar = new TrackBar(hwnd, CW_TRACKBAR_X, CW_TRACKBAR_Y, CW_TRACKBAR_WIDTH, CW_TRACKBAR_MIN, CW_TRACKBAR_MAX, CW_TRACKBAR_IDENTIFIER);
-	volumeBar = new TrackBar(hwnd, CW_WINDOW_WIDTH - 80, CW_IMAGE_MENU_TOP + 25, 50, CW_TRACKBAR_MIN, CW_TRACKBAR_MAX, CW_VOLUMEBAR_IDENTIFIER);
+	trackBar = new TrackBar(hwnd, CW_TRACKBAR_X, CW_TRACKBAR_Y, rect.right, CW_TRACKBAR_MIN, CW_TRACKBAR_MAX, CW_TRACKBAR_IDENTIFIER);
+	volumeBar = new TrackBar(hwnd, rect.right - 80, CW_IMAGE_MENU_TOP + 25, 50, CW_TRACKBAR_MIN, CW_TRACKBAR_MAX, CW_VOLUMEBAR_IDENTIFIER);
 
 	images = new BitMapImage[IMAGES_COUNT];
 
@@ -187,13 +196,15 @@ void Window_Manager::OnPaint(HWND hwnd, LPARAM lParam)
 	// get window size
 	RECT rect;
 	rect.left = rect.right = rect.top = rect.bottom = 0;
-	GetWindowRect(hwnd, &rect);
+	GetClientRect(hwnd, &rect);
 	OffsetRect(&rect, -rect.left, -rect.top);
 
 	// set region to draw
 	HBITMAP tempBitMap = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
 	SelectObject(tempDC, tempBitMap);
 	FillRect(tempDC, &rect, (HBRUSH)7);
+
+	int oldMode = SetBkMode(tempDC, TRANSPARENT);
 
 	// draw buttons
 	for (int i = IMAGES_COUNT - 1; i >= 0; i--)
@@ -204,6 +215,32 @@ void Window_Manager::OnPaint(HWND hwnd, LPARAM lParam)
 	// draw bars
 	trackBar->Draw(tempDC);
 	volumeBar->Draw(tempDC);
+
+	// draw track time
+	
+
+	char * trackTimeString = TimeToString(trackTime);
+	int lenTT = strlen(trackTimeString);
+	RECT rcText;
+	rcText.left = rcText.right = rcText.top = rcText.bottom = 0;
+	DrawText(tempDC, trackTimeString, lenTT, &rcText, DT_CALCRECT);
+	rcText.left = rect.right - rcText.right - 1;
+	rcText.right = rect.right - 1;
+	rcText.top = CW_TRACKBAR_Y - rcText.bottom - 3;
+	rcText.bottom = CW_TRACKBAR_Y - 3;
+	DrawText(tempDC, trackTimeString, lenTT, &rcText, DT_LEFT);
+
+
+	char * currentTimeString = TimeToString(currentTrackTime);
+	lenTT = strlen(currentTimeString);
+	rcText.left = rcText.right = rcText.top = rcText.bottom = 0;
+	DrawText(tempDC, trackTimeString, lenTT, &rcText, DT_CALCRECT);
+	TextOut(tempDC,  1, CW_TRACKBAR_Y - rcText.bottom - 3, currentTimeString, strlen(currentTimeString));
+
+
+	SetBkMode(tempDC, oldMode);
+
+
 
 	// load drawn region
 	BitBlt(hdc, 0, 0, rect.right, rect.bottom, tempDC, 0, 0, SRCCOPY);
@@ -386,10 +423,10 @@ char * Window_Manager::TimeToString(long time)
 		strTime[i] = min[i];
 	}
 
-	strTime[i + 1] = ':';
+	strTime[i] = ':';
+	strTime[i + 1] = '0' + seconds / 10;
 	strTime[i + 2] = '0' + seconds % 10;
-	strTime[i + 3] = '0' + seconds / 10;
-	strTime[i + 4] = '\0';
+	strTime[i + 3] = '\0';
 
 	return strTime;
 }
