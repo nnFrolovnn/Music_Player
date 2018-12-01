@@ -6,12 +6,10 @@
 #define CW_WM_STATE_MINIMIZED 1
 #define CW_WM_STATE_MAXIMIZED 2
 
-#define CW_WM_TIMER_2 2
-
 #define CW_WM_IMAGES_COUNT 2
-#define CW_WM_CLOSE_BUTTON_PATH ""
-#define CW_WM_MINIMIZE_BUTTON_PATH ""
-#define CW_WM_MINIMIZED_IMAGE_PATH ""
+#define CW_WM_CLOSE_BUTTON_PATH "resources//Close.bmp"
+#define CW_WM_MINIMIZE_BUTTON_PATH "resources//Minimize2.bmp"
+#define CW_WM_MINIMIZED_IMAGE_PATH "resources//Expand Arrow_20px.bmp"
 
 #define CW_WM_CLOSE_BUTTON_ID 1
 #define CW_WM_MINIMIZE_BUTTON_ID 2
@@ -41,6 +39,5 @@ private:
 	BOOL LButtonDown(HWND hwnd, LPARAM lParam);
 	BOOL LButtonUp(HWND hwnd, LPARAM lParam);
 	void OnMouseMove(HWND hwnd, LPARAM lParam);
-	BOOL OnTimer(HWND hwnd, WPARAM timerID);
 };
 

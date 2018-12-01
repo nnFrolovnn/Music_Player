@@ -103,7 +103,7 @@ UINT BitMapImage::GetNumber()
 
 BOOL BitMapImage::ContainsPoint(POINT point)
 {
-	return (x <= point.x && point.x >= x + width && y <= point.y && point.y <= y + width) ? TRUE : FALSE;
+	return (x <= point.x && point.x <= x + width && y <= point.y && point.y <= y + width) ? TRUE : FALSE;
 }
 
 void BitMapImage::MakeTransparent(HDC hdc)

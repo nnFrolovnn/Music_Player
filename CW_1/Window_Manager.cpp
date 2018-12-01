@@ -182,7 +182,7 @@ void Window_Manager::OnCreate(HWND hwnd)
 	trackBar = new TrackBar(hwnd, CW_TRACKBAR_X, CW_TRACKBAR_Y, rect.right, CW_TRACKBAR_MIN, CW_TRACKBAR_MAX, CW_TRACKBAR_IDENTIFIER);
 	volumeBar = new TrackBar(hwnd, rect.right - 80, CW_IMAGE_MENU_TOP + 25, 50, CW_TRACKBAR_MIN, CW_TRACKBAR_MAX, CW_VOLUMEBAR_IDENTIFIER);
 
-	window_menu = new Window_Menu(0, 0, rect.right, rect.bottom);
+	window_menu = new Window_Menu(0, 0, rect.right, 40);
 
 	images = new BitMapImage[IMAGES_COUNT];
 	images[0] = BitMapImage(CW_NUMBER_PLAY_LIST_BUTTON, 5, CW_IMAGE_MENU_TOP, CW_IMAGE_PLAYLIST_PATH);
