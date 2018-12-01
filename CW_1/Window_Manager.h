@@ -4,6 +4,8 @@
 #include <string>
 #include <IImgCtx.h>
 #include <shellapi.h>
+
+#include "Window_Menu.h"
 #include "Bass_Manager.h"
 #include "CW_Header.h"
 #include "BitMapImage.h"
@@ -30,6 +32,7 @@ private:
 	BitMapImage * selectedButton;
 	TrackBar* trackBar;
 	TrackBar* volumeBar;
+	Window_Menu* window_menu;
 
 	HINSTANCE hinstance;
 
@@ -44,8 +47,6 @@ private:
 	void OnLButtonUp(HWND hwnd, LPARAM lParam);
 	void OnDropFiles(HWND hwnd, WPARAM wParam);
 	void OnScroll(HWND hwnd, WPARAM wParam, LPARAM lParam);
-	char* TimeToString(long time);
-
-	
+	char* TimeToString(long time);	
 };
 

@@ -1,4 +1,4 @@
-﻿  Main.cpp
+﻿  Window_Manager.cpp
 d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_cmponents\bassmod.h(65): warning C4005: BASS_MUSIC_RAMP: изменение макроопределения
   d:\учеба\5 семестр\курсовая\cw_git\music_player\packages\bass.2.4.12.1\build\native\include\bass.h(303): note: см. предыдущее определение "BASS_MUSIC_RAMP"
 d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_cmponents\bassmod.h(66): warning C4005: BASS_MUSIC_RAMPS: изменение макроопределения
@@ -25,4 +25,10 @@ d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_cm
   d:\учеба\5 семестр\курсовая\cw_git\music_player\packages\bass.2.4.12.1\build\native\include\bass.h(315): note: см. предыдущее определение "BASS_MUSIC_NOSAMPLE"
 d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_cmponents\bassmod.h(82): warning C4005: BASS_SYNC_MUSICPOS: изменение макроопределения
   d:\учеба\5 семестр\курсовая\cw_git\music_player\packages\bass.2.4.12.1\build\native\include\bass.h(545): note: см. предыдущее определение "BASS_SYNC_MUSICPOS"
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\window_manager.cpp(18): warning C4101: point: неиспользованная локальная переменная
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\window_manager.cpp(231): warning C4244: аргумент: преобразование "double" в "long", возможна потеря данных
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\window_manager.cpp(243): warning C4244: аргумент: преобразование "double" в "long", возможна потеря данных
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\window_manager.cpp(385): warning C4018: <: несоответствие типов со знаком и без знака
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\window_manager.cpp(428): warning C4018: <: несоответствие типов со знаком и без знака
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\window_manager.cpp(434): warning C4244: =: преобразование "long" в "char", возможна потеря данных
   CW_1.vcxproj -> D:\учеба\5 семестр\Курсовая\CW_git\Music_Player\Debug\CW_1.exe

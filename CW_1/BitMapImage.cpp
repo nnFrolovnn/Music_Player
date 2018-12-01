@@ -38,7 +38,7 @@ BitMapImage::BitMapImage(UINT numb, int nx, int ny, const char* path) :BitMapIma
 
 void BitMapImage::Draw(HDC hdc)
 {
-	if (isVisible) 
+	if (isVisible)
 	{
 		if (!isTransparent)
 		{
@@ -99,6 +99,11 @@ BOOL BitMapImage::IsVisible()
 UINT BitMapImage::GetNumber()
 {
 	return number;
+}
+
+BOOL BitMapImage::ContainsPoint(POINT point)
+{
+	return (x <= point.x && point.x >= x + width && y <= point.y && point.y <= y + width) ? TRUE : FALSE;
 }
 
 void BitMapImage::MakeTransparent(HDC hdc)

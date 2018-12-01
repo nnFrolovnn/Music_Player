@@ -24,6 +24,7 @@ public:
 	int GetLeft();
 	BOOL IsVisible();
 	UINT GetNumber();
+	BOOL ContainsPoint(POINT point);
 
 private:
 	HBITMAP hbitmap;

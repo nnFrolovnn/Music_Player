@@ -9,13 +9,14 @@ Window_Manager::Window_Manager()
 	trackBar = NULL;
 	volumeBar = NULL;
 	bass_manager = NULL;
+	window_menu = NULL;
 }
 
 LRESULT Window_Manager::MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	BOOL handled = FALSE;
 	POINT point;
-	
+
 	//is message for trackbar
 	if (trackBar != NULL)
 	{
@@ -25,6 +26,12 @@ LRESULT Window_Manager::MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 	if (!handled && volumeBar != NULL )
 	{
 		handled = volumeBar->MainWindowProc(uMsg, wParam, lParam);
+	}
+
+	//is message for window_menu
+	if (!handled && window_menu != NULL)
+	{
+		handled = window_menu->MainWindowProc(hWnd, uMsg, wParam, lParam);
 	}
 
 	if (!handled)
@@ -175,8 +182,9 @@ void Window_Manager::OnCreate(HWND hwnd)
 	trackBar = new TrackBar(hwnd, CW_TRACKBAR_X, CW_TRACKBAR_Y, rect.right, CW_TRACKBAR_MIN, CW_TRACKBAR_MAX, CW_TRACKBAR_IDENTIFIER);
 	volumeBar = new TrackBar(hwnd, rect.right - 80, CW_IMAGE_MENU_TOP + 25, 50, CW_TRACKBAR_MIN, CW_TRACKBAR_MAX, CW_VOLUMEBAR_IDENTIFIER);
 
-	images = new BitMapImage[IMAGES_COUNT];
+	window_menu = new Window_Menu(0, 0, rect.right, rect.bottom);
 
+	images = new BitMapImage[IMAGES_COUNT];
 	images[0] = BitMapImage(CW_NUMBER_PLAY_LIST_BUTTON, 5, CW_IMAGE_MENU_TOP, CW_IMAGE_PLAYLIST_PATH);
 	images[1] = BitMapImage(CW_NUMBER_REWIND_BUTTON, 170, CW_IMAGE_MENU_TOP, CW_IMAGE_REWIND_PATH);
 	images[2] = BitMapImage(CW_NUMBER_PLAY_BUTTON, 225, CW_IMAGE_MENU_TOP, CW_IMAGE_PLAY_PATH);
@@ -216,9 +224,10 @@ void Window_Manager::OnPaint(HWND hwnd, LPARAM lParam)
 	trackBar->Draw(tempDC);
 	volumeBar->Draw(tempDC);
 
-	// draw track time
-	
+	// draw menu
+	window_menu->Draw(tempDC);
 
+	// draw track time
 	char * trackTimeString = TimeToString(trackTime);
 	int lenTT = strlen(trackTimeString);
 	RECT rcText;
@@ -239,8 +248,6 @@ void Window_Manager::OnPaint(HWND hwnd, LPARAM lParam)
 
 
 	SetBkMode(tempDC, oldMode);
-
-
 
 	// load drawn region
 	BitBlt(hdc, 0, 0, rect.right, rect.bottom, tempDC, 0, 0, SRCCOPY);
