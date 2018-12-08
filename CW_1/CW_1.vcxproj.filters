@@ -36,6 +36,9 @@
     <ClCompile Include="Window_Menu.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="Play_List_Panel.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bass_Manager.h">
@@ -54,6 +57,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Window_Menu.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Play_List_Panel.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

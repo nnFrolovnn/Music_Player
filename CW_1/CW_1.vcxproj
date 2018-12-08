@@ -119,6 +119,7 @@
     <ClCompile Include="Bass_Manager.cpp" />
     <ClCompile Include="BitMapImage.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Play_List_Panel.cpp" />
     <ClCompile Include="TrackBar.cpp" />
     <ClCompile Include="Window_Manager.cpp" />
     <ClCompile Include="Window_Menu.cpp" />
@@ -127,6 +128,7 @@
     <ClInclude Include="Bass_Manager.h" />
     <ClInclude Include="BitMapImage.h" />
     <ClInclude Include="CW_Header.h" />
+    <ClInclude Include="Play_List_Panel.h" />
     <ClInclude Include="TrackBar.h" />
     <ClInclude Include="Window_Manager.h" />
     <ClInclude Include="Window_Menu.h" />

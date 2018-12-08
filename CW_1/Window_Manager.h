@@ -33,7 +33,7 @@ private:
 	TrackBar* trackBar;
 	TrackBar* volumeBar;
 	Window_Menu* window_menu;
-
+	HBRUSH brush;
 	HINSTANCE hinstance;
 
 	double trackTime, currentTrackTime;

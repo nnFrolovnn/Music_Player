@@ -42,6 +42,8 @@ public:
 	char* GetStreamInfo();
 	double GetStreamTime();
 	DWORD GetFlags();
+	musicFile* GetPlayList();
+	int GetPlayListSize();
 
 	BOOL AddFileNameToList(char* filePath);
 

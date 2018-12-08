@@ -23,35 +23,31 @@ Window_Menu::Window_Menu(int left, int top, int width, int height)
 	menuRect.left = left;
 	menuRect.bottom = top + height;
 	menuRect.right = left + width;
+
+	prevPoint.x = -1;
+	prevPoint.y = -1;
 }
 
 void Window_Menu::Draw(HDC hdc)
 {
-	int old_bkMode = SetBkMode(hdc, TRANSPARENT);
-
-	if (drawBk)
+	if (state == CW_WM_STATE_MAXIMIZED)
 	{
-		HBRUSH brush = CreateSolidBrush(0x50000000);
-		RECT rc;
-		rc.left = left;
-		rc.top = top;
-		rc.bottom = top + minimezedImage->GetHeight() + 1;
-		rc.right = left + width;
-		FillRect(hdc, &rc, brush);
-		//HBRUSH oldBrush = (HBRUSH)SelectObject(hdc, brush);
-
-		//Rectangle(hdc, left, top, left + width, top + minimezedImage->GetHeight() + 1);
-		//SelectObject(hdc, oldBrush);
-		DeleteObject(brush);
+		for (int i = 0; i < CW_WM_IMAGES_COUNT; i++)
+		{
+			buttons[i].Draw(hdc);
+		}
+		MoveToEx(hdc, left, top + height, NULL);
+		LineTo(hdc, left + width, top + height);
 	}
-
-	for (int i = 0; i < CW_WM_IMAGES_COUNT; i++)
+	else if (state == CW_WM_STATE_MINIMIZED)
 	{
-		buttons[i].Draw(hdc);
+		minimezedImage->Draw(hdc);
+		if (drawBk)
+		{
+			MoveToEx(hdc, left, top + minimezedImage->GetHeight(), NULL);
+			LineTo(hdc, left + width, top + minimezedImage->GetHeight());
+		}
 	}
-
-	minimezedImage->Draw(hdc);
-	SetBkMode(hdc, old_bkMode);
 }
 
 BOOL Window_Menu::MainWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -64,7 +60,7 @@ BOOL Window_Menu::MainWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 		result = LButtonDown(hwnd, lParam);
 		break;
 	case WM_LBUTTONUP:
-		result = LButtonUp(hwnd, lParam);		
+		result = LButtonUp(hwnd, lParam);
 		break;
 	case WM_MOUSEMOVE:
 		OnMouseMove(hwnd, lParam);
@@ -86,10 +82,10 @@ BOOL Window_Menu::LButtonDown(HWND hwnd, LPARAM lParam)
 	point.x = LOWORD(lParam);
 	point.y = HIWORD(lParam);
 
-	if (state == CW_WM_STATE_MINIMIZED && minimezedImage->ContainsPoint(point))
+	if (state == CW_WM_STATE_MINIMIZED && minimezedImage->GetHeight() >= point.y)
 	{
 		result = TRUE;
-		selectedImage = minimezedImage;		
+		selectedImage = minimezedImage;
 	}
 	else if (state == CW_WM_STATE_MAXIMIZED)
 	{
@@ -100,6 +96,7 @@ BOOL Window_Menu::LButtonDown(HWND hwnd, LPARAM lParam)
 			{
 				selectedImage = &(buttons[i]);
 				buttons[i].Move(2, 3);
+				InvalidateRect(hwnd, NULL, true);
 				break;
 			}
 		}
@@ -115,6 +112,11 @@ BOOL Window_Menu::LButtonDown(HWND hwnd, LPARAM lParam)
 			minimezedImage->SetVisible(TRUE);
 			InvalidateRect(hwnd, NULL, true);
 		}
+		else if (selectedImage == NULL && point.y <= top + height)
+		{
+			GetCursorPos(&prevPoint);
+			state = CW_WM_STATE_MOVE_WINDOW;
+		}
 	}
 	return result;
 }
@@ -122,8 +124,14 @@ BOOL Window_Menu::LButtonDown(HWND hwnd, LPARAM lParam)
 BOOL Window_Menu::LButtonUp(HWND hwnd, LPARAM lParam)
 {
 	BOOL result = FALSE;
-	if (selectedImage != NULL)
+
+	if (state == CW_WM_STATE_MOVE_WINDOW)
 	{
+		state = CW_WM_STATE_MAXIMIZED;
+	}
+	else if (selectedImage != NULL)
+	{
+		selectedImage->Move(-2, -3);
 		switch (selectedImage->GetNumber())
 		{
 		case CW_WM_CLOSE_BUTTON_ID:
@@ -140,13 +148,16 @@ BOOL Window_Menu::LButtonUp(HWND hwnd, LPARAM lParam)
 				buttons[i].SetVisible(TRUE);
 			}
 			minimezedImage->SetVisible(FALSE);
-			InvalidateRect(hwnd, NULL, true);
+			minimezedImage->Move(2, 3);
 			break;
 		case CW_WM_MINIMIZE_BUTTON_ID:
 			result = TRUE;
-			SendMessage(hwnd, WM_SIZE, SIZE_MINIMIZED, 0);
+			SendMessage(hwnd, WM_SYSCOMMAND, SC_MINIMIZE, 0);
 			break;
 		}
+
+		selectedImage = NULL;
+		InvalidateRect(hwnd, NULL, true);
 	}
 	return result;
 }
@@ -157,13 +168,25 @@ void Window_Menu::OnMouseMove(HWND hwnd, LPARAM lParam)
 	point.x = LOWORD(lParam);
 	point.y = HIWORD(lParam);
 
-	if (state == CW_WM_STATE_MINIMIZED && left <= point.x && left + width >= point.x &&
-		top <= point.y && top + height >= point.y)
+	if (state == CW_WM_STATE_MOVE_WINDOW)
+	{
+		RECT rc;
+		rc.bottom = rc.left = rc.right = rc.top = 0;
+		GetWindowRect(hwnd, &rc);
+
+		GetCursorPos(&point);
+
+		SetWindowPos(hwnd, HWND_TOP, rc.left + point.x - prevPoint.x, rc.top + point.y - prevPoint.y,
+			rc.right - rc.left, rc.bottom - rc.top, SWP_SHOWWINDOW);
+		prevPoint = point;
+	}
+	else if (state == CW_WM_STATE_MINIMIZED && left <= point.x && left + width >= point.x &&
+		top <= point.y && top + minimezedImage->GetHeight() >= point.y)
 	{
 		if (!drawBk)
 		{
 			drawBk = TRUE;
-			InvalidateRect(hwnd, NULL, true);
+			InvalidateRect(hwnd, NULL, false);
 			//SendMessage(hwnd, WM_PAINT, 0, 0);
 		}
 	}
@@ -172,7 +195,7 @@ void Window_Menu::OnMouseMove(HWND hwnd, LPARAM lParam)
 		if (drawBk)
 		{
 			drawBk = FALSE;
-			InvalidateRect(hwnd, NULL, true);
+			InvalidateRect(hwnd, NULL, false);
 			//SendMessage(hwnd, WM_PAINT, 0, 0);
 		}
 	}

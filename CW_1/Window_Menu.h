@@ -5,6 +5,7 @@
 
 #define CW_WM_STATE_MINIMIZED 1
 #define CW_WM_STATE_MAXIMIZED 2
+#define CW_WM_STATE_MOVE_WINDOW 3
 
 #define CW_WM_IMAGES_COUNT 2
 #define CW_WM_CLOSE_BUTTON_PATH "resources//Close.bmp"
@@ -29,6 +30,7 @@ private:
 	int width, height;
 	BOOL drawBk;
 	RECT menuRect;
+	POINT prevPoint;
 	int state;
 
 	BitMapImage* buttons;

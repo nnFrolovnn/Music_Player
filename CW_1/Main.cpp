@@ -11,13 +11,15 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 void RegWNDClassEX(HINSTANCE hInstance)
 {
+	HBRUSH brush = CreateSolidBrush(CW_BK_COLOR);
 	WNDCLASSEX wcex;
 	memset(&wcex, 0, sizeof(WNDCLASSEX));
 	wcex.cbSize = sizeof(WNDCLASSEX);
 	wcex.lpfnWndProc = MainWindowProc;
 	wcex.hInstance = hInstance;
+	wcex.hIcon = (HICON)LoadImage(hInstance, "resources//icons8_Music_Folder.ico", IMAGE_ICON, 0, 0, LR_LOADFROMFILE);
 	wcex.hCursor = LoadCursor(0, IDC_ARROW); //IDC_HAND
-	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 2);
+	wcex.hbrBackground = brush;
 	wcex.lpszClassName = CW_WINDOW_CLASS_NAME;
 	RegisterClassExA(&wcex);
 }

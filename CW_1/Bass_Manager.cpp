@@ -172,6 +172,16 @@ DWORD Bass_Manager::GetFlags()
 	return 0;
 }
 
+musicFile * Bass_Manager::GetPlayList()
+{
+	return playList;
+}
+
+int Bass_Manager::GetPlayListSize()
+{
+	return musicFilesCount;
+}
+
 BOOL Bass_Manager::AddFileNameToList(char * filePath)
 {
 	if (filePath != NULL)
@@ -197,9 +207,33 @@ BOOL Bass_Manager::AddFileNameToList(char * filePath)
 
 		playList[musicFilesCount - 1].filePath = new char[len + 1];
 		strcpy_s(playList[musicFilesCount - 1].filePath, len + 1, filePath);
-		playList[musicFilesCount - 1].name = playList[musicFilesCount - 1].filePath;
+
+		//get name of file
+		int slashPos = 0;
+		int dotPos = len - 1;
+		for (int i = len - 1; i > 0; i--)
+		{
+			if (filePath[i] == '.' && dotPos == len - 1)
+			{
+				dotPos = i;
+			}
+			if (filePath[i] == '\\' || filePath[i] == '//')
+			{
+				slashPos = i + 1;
+				break;
+			}
+		}
+		char * tempName = new char[dotPos - slashPos + 2];
+		for (int i = slashPos; i < dotPos; i++)
+		{
+			tempName[i - slashPos] = filePath[i];
+		}
+		tempName[dotPos - slashPos] = '\0';
+		playList[musicFilesCount - 1].name = tempName;
+
 
 		//get file size
+
 		FILE* file;
 		fopen_s(&file, playList[musicFilesCount - 1].filePath, "r");
 		long int size_of_file = 0;

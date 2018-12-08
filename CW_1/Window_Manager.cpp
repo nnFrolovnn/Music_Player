@@ -10,6 +10,7 @@ Window_Manager::Window_Manager()
 	volumeBar = NULL;
 	bass_manager = NULL;
 	window_menu = NULL;
+	brush = CreateSolidBrush(CW_BK_COLOR);
 }
 
 LRESULT Window_Manager::MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -64,15 +65,6 @@ LRESULT Window_Manager::MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			break;
 		case WM_DROPFILES:
 			OnDropFiles(hWnd, wParam);
-			break;
-		case WM_MOUSEMOVE:
-			/*point.x = LOWORD(lParam);
-			point.y = HIWORD(lParam);
-
-			if (point.y < 200)
-			{
-				SetWindowPos(hWnd, HWND_TOP, point.x, point.y, 500, 300, SWP_SHOWWINDOW);
-			}*/
 			break;
 		case WM_HSCROLL:
 			OnScroll(hWnd, wParam, lParam);
@@ -200,7 +192,6 @@ void Window_Manager::OnPaint(HWND hwnd, LPARAM lParam)
 	PAINTSTRUCT ps;
 	HDC hdc = BeginPaint(hwnd, &ps);
 	HDC tempDC = CreateCompatibleDC(hdc);
-
 	// get window size
 	RECT rect;
 	rect.left = rect.right = rect.top = rect.bottom = 0;
@@ -210,7 +201,7 @@ void Window_Manager::OnPaint(HWND hwnd, LPARAM lParam)
 	// set region to draw
 	HBITMAP tempBitMap = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
 	SelectObject(tempDC, tempBitMap);
-	FillRect(tempDC, &rect, (HBRUSH)7);
+	FillRect(tempDC, &rect, brush);
 
 	int oldMode = SetBkMode(tempDC, TRANSPARENT);
 
@@ -233,12 +224,7 @@ void Window_Manager::OnPaint(HWND hwnd, LPARAM lParam)
 	RECT rcText;
 	rcText.left = rcText.right = rcText.top = rcText.bottom = 0;
 	DrawText(tempDC, trackTimeString, lenTT, &rcText, DT_CALCRECT);
-	rcText.left = rect.right - rcText.right - 1;
-	rcText.right = rect.right - 1;
-	rcText.top = CW_TRACKBAR_Y - rcText.bottom - 3;
-	rcText.bottom = CW_TRACKBAR_Y - 3;
-	DrawText(tempDC, trackTimeString, lenTT, &rcText, DT_LEFT);
-
+	TextOut(tempDC, rect.right - rcText.right - 1, CW_TRACKBAR_Y - rcText.bottom - 3, trackTimeString, lenTT);
 
 	char * currentTimeString = TimeToString(currentTrackTime);
 	lenTT = strlen(currentTimeString);

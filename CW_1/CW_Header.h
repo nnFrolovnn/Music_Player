@@ -4,6 +4,8 @@
 
 #define CW_WINDOW_WIDTH 500
 #define CW_WINDOW_HEIGHT 300
+#define CW_BK_COLOR RGB(20, 40, 56)
+
 
 #define CW_TRACKBAR_WIDTH CW_WINDOW_WIDTH
 #define CW_TRACKBAR_HEIGHT 6
@@ -29,40 +31,3 @@
 #define CW_NUMBER_FAST_F_BUTTON 4
 #define CW_NUMBER_STOP_BUTTON 5
 #define CW_NUMBER_PAUSE_BUTTON 6
-
-
-//second way to do
-/*HWND button = CreateWindowExA(NULL, "button", "Пуск", WS_VISIBLE | WS_CHILD | BS_BITMAP,
-50, 50, 50, 50, hwnd, NULL, NULL, NULL);
-
-HBITMAP hBitmap = (HBITMAP)LoadImage(NULL, CW_IMAGE_PLAY_PATH, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-
-SendMessage(button, BM_SETIMAGE, IMAGE_BITMAP, LPARAM(hBitmap));
-SendMessage(button, WM_PAINT, 0, 0);*/
-
-/*void TrackBar::GradientRectangle(HDC hdc, LONG x1, LONG y1, LONG x2, LONG y2, COLORREF top, COLORREF bottom)
-{
-TRIVERTEX vertex[2];
-vertex[0].x = x1;
-vertex[0].y = y1;
-vertex[0].Red = 0x0000;
-vertex[0].Green = 0x8000;
-vertex[0].Blue = 0x8000;
-vertex[0].Alpha = 0x0000;
-
-vertex[1].x = x2;
-vertex[1].y = y2;
-vertex[1].Red = 0x0000;
-vertex[1].Green = 0xd000;
-vertex[1].Blue = 0xd000;
-vertex[1].Alpha = 0x0000;
-
-// Create a GRADIENT_RECT structure that
-// references the TRIVERTEX vertices.
-GRADIENT_RECT gRect;
-gRect.UpperLeft = 0;
-gRect.LowerRight = 1;
-
-// Draw a shaded rectangle.
-GradientFill(hdc, vertex, 2, &gRect, 1, GRADIENT_FILL_RECT_V);
-}*/
