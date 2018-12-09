@@ -9,7 +9,6 @@ Bass_Manager::Bass_Manager()
 	isPause = FALSE;
 	currentMusicFile = 0;
 	BOOL init = BASS_Init(-1, 44100, BASS_DEVICE_STEREO | BASS_DEVICE_3D , 0, 0);
-	BOOL initmod = BASSMOD_Init(-1, 44100, BASS_DEVICE_STEREO | BASS_DEVICE_3D);
 }
 
 Bass_Manager::Bass_Manager(HWND hwnd)
@@ -21,13 +20,11 @@ Bass_Manager::Bass_Manager(HWND hwnd)
 	isPause = FALSE;
 	currentMusicFile = 0;
 	BOOL init = BASS_Init(-1, 44100, BASS_DEVICE_STEREO | BASS_DEVICE_3D, hwnd, 0);
-	BOOL initmod = BASSMOD_Init(-1, 44100, BASS_DEVICE_STEREO | BASS_DEVICE_3D);
 }
 
 Bass_Manager::~Bass_Manager()
 {
 	BASS_Free();
-	BASSMOD_Free();
 }
 
 void Bass_Manager::StreamPlay()

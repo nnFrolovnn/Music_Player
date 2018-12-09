@@ -10,6 +10,7 @@
 #include "CW_Header.h"
 #include "BitMapImage.h"
 #include "TrackBar.h"
+#include "Play_List_Panel.h"
 
 #pragma comment (lib, "ComCtl32")
 
@@ -28,14 +29,15 @@ public:
 
 private:
 	Bass_Manager* bass_manager;
-	BitMapImage* images;
-	BitMapImage * selectedButton;
+	BitMapImage* images;	
 	TrackBar* trackBar;
 	TrackBar* volumeBar;
 	Window_Menu* window_menu;
+	Play_List_Panel* playListPanel;
+	
 	HBRUSH brush;
 	HINSTANCE hinstance;
-
+	BitMapImage * selectedButton;
 	double trackTime, currentTrackTime;
 	
 	void OnTimer(HWND hwnd, int timerID);

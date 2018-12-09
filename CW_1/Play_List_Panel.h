@@ -2,10 +2,11 @@
 #include <Windows.h>
 
 #include "Bass_Manager.h"
-
+#include "BitMapImage.h"
+#include "CW_Types.h"
 
 #define TIMER_2 2
-
+#define CW_PLP_SHOW_IMAGE_PATH "resources//Expand Arrow_left_20px.bmp"
 class Play_List_Panel
 {
 public:
@@ -14,11 +15,19 @@ public:
 	void Draw(HDC hdc);
 	BOOL MainWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-	BOOL AddMusicFile(char* file);
-	BOOL RemoveMusicFile(int number);
-
+	void SetShownState();
 private:
 	Bass_Manager* bass_manager;
-	int left, top, width, height;
+	int left, top, width, height, wheeling;
+	STATE state, bkState;
+
+	int* topCoordinates;
+	musicFile* playList;
+	BitMapImage* imageShow;
+
+	int CalculateHeight(HDC hdc, int fromFile = 0);
+	BOOL LButtonDown(HWND hwnd, LPARAM lParam);
+	BOOL LButtonUp(HWND hwnd, LPARAM lParam);
+	void OnMouseMove(HWND hwnd, LPARAM lParam);
 };
 

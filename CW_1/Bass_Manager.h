@@ -7,18 +7,11 @@
 #include "bass.h"
 #include "bass_cmponents\bassenc.h"
 #include "bass_cmponents\bassenc_mp3.h"
-#include "bass_cmponents\bassmod.h"
 #include "bass_cmponents\unmo3.h"
+#include "CW_Types.h"
 
 #pragma comment (lib, "bass.lib")
 #pragma comment (lib, "unmo3.lib")
-#pragma comment (lib, "bassmod.lib")
-
-struct musicFile {
-	QWORD fileSize;
-	char* filePath;
-	char* name;
-};
 
 class Bass_Manager
 {

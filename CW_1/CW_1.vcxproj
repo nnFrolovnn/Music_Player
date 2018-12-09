@@ -128,6 +128,7 @@
     <ClInclude Include="Bass_Manager.h" />
     <ClInclude Include="BitMapImage.h" />
     <ClInclude Include="CW_Header.h" />
+    <ClInclude Include="CW_Types.h" />
     <ClInclude Include="Play_List_Panel.h" />
     <ClInclude Include="TrackBar.h" />
     <ClInclude Include="Window_Manager.h" />

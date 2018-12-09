@@ -35,6 +35,11 @@ LRESULT Window_Manager::MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 		handled = window_menu->MainWindowProc(hWnd, uMsg, wParam, lParam);
 	}
 
+	if (!handled && playListPanel != NULL)
+	{
+		handled = playListPanel->MainWindowProc(hWnd, uMsg, wParam, lParam);
+	}
+
 	if (!handled)
 	{
 		switch (uMsg)
@@ -176,6 +181,8 @@ void Window_Manager::OnCreate(HWND hwnd)
 
 	window_menu = new Window_Menu(0, 0, rect.right, 40);
 
+	playListPanel = new Play_List_Panel(0, 40, 170, CW_TRACKBAR_Y - 57, bass_manager);
+
 	images = new BitMapImage[IMAGES_COUNT];
 	images[0] = BitMapImage(CW_NUMBER_PLAY_LIST_BUTTON, 5, CW_IMAGE_MENU_TOP, CW_IMAGE_PLAYLIST_PATH);
 	images[1] = BitMapImage(CW_NUMBER_REWIND_BUTTON, 170, CW_IMAGE_MENU_TOP, CW_IMAGE_REWIND_PATH);
@@ -214,6 +221,9 @@ void Window_Manager::OnPaint(HWND hwnd, LPARAM lParam)
 	// draw bars
 	trackBar->Draw(tempDC);
 	volumeBar->Draw(tempDC);
+
+	// draw playlist
+	playListPanel->Draw(tempDC);
 
 	// draw menu
 	window_menu->Draw(tempDC);
@@ -294,6 +304,8 @@ void Window_Manager::OnLButtonUp(HWND hwnd, LPARAM lParam)
 		switch (selectedButton->GetNumber())
 		{
 		case CW_NUMBER_PLAY_LIST_BUTTON:
+			playListPanel->SetShownState();
+			SendMessage(hwnd, WM_PAINT, 0, 0);
 			break;
 		case CW_NUMBER_REWIND_BUTTON:
 			if (bass_manager->MusicIsPlayingOrIsPaused())
