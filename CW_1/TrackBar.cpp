@@ -186,7 +186,7 @@ BOOL TrackBar::OnButtonDown(LPARAM lParam)
 
 			sliderImage->SetLeft(point.x - height / 2 - 1);
 
-			InvalidateRect(parentHwnd, &barRect, true);
+			InvalidateRect(parentHwnd, &barRect, false);
 			SendMessage(parentHwnd, WM_PAINT, 0, PAINT_MESS_FROM_TRACKBAR);
 			SendMessage(parentHwnd, WM_HSCROLL, identifier, currentState);
 			return TRUE;
@@ -246,7 +246,7 @@ void TrackBar::OnMouseMove(LPARAM lParam)
 
 		//notify parent window
 		SendMessage(parentHwnd, WM_HSCROLL, identifier, currentState);
-		InvalidateRect(parentHwnd, &barRect, false);
+		InvalidateRect(parentHwnd, NULL, false);
 		SendMessage(parentHwnd, WM_PAINT, identifier, PAINT_MESS_FROM_TRACKBAR);
 	}
 	else if (!isPressed && leftCenterPoint.y - height / 2 <= point.y && point.y <= leftCenterPoint.y + height / 2

@@ -24,7 +24,7 @@ LRESULT Window_Manager::MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 		handled = trackBar->MainWindowProc(uMsg, wParam, lParam);
 	}
 	//is message for volumeBar
-	if (!handled && volumeBar != NULL )
+	if (!handled && volumeBar != NULL)
 	{
 		handled = volumeBar->MainWindowProc(uMsg, wParam, lParam);
 	}
@@ -74,6 +74,9 @@ LRESULT Window_Manager::MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 		case WM_HSCROLL:
 			OnScroll(hWnd, wParam, lParam);
 			break;
+		case WM_PLAYFILE:
+			PlayFile(hWnd, wParam);
+			break;
 		}
 	}
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
@@ -100,25 +103,19 @@ void Window_Manager::OnTimer(HWND hwnd, int timerID)
 		{
 			currentTrackTime++;
 			SendMessage(trackBar->GetHWND(), TBM_SETPOS, TRUE, (int)((currentTrackTime / trackTime) * 100));
-			InvalidateRect(hwnd, NULL, true);
+			InvalidateRect(hwnd, NULL, false);
+			SendMessage(hwnd, WM_PAINT, 0, 0);
 		}
 		else
 		{
-			KillTimer(hwnd, TIMER_1);
 			currentTrackTime = 0;
-			trackTime = 0;
+			bass_manager->StreamPlayNext();
+			trackTime = bass_manager->GetStreamTime();
 			SendMessage(trackBar->GetHWND(), TBM_SETPOS, TRUE, 0);
-			InvalidateRect(hwnd, NULL, true);
-			/* TODO when music finished play next or stop
-			if (bass_manager->MusicIsPlayingOrIsPaused())
-			{
-				bass_manager->StreamPlayNext();
-				currentTrackTime = 0;
-				trackTime = bass_manager->GetStreamTime();
-				SendMessage(trackBarHwnd, TBM_SETPOS, TRUE, (int)((currentTrackTime / trackTime) * 100));
-				SetTimer(hwnd, TIMER_1, 1000, NULL);
-			}
-			*/
+			playListPanel->SelectNext();
+
+			InvalidateRect(hwnd, NULL, false);
+			SendMessage(hwnd, WM_PAINT, 0, 0);
 		}
 		break;
 	}
@@ -240,7 +237,7 @@ void Window_Manager::OnPaint(HWND hwnd, LPARAM lParam)
 	lenTT = strlen(currentTimeString);
 	rcText.left = rcText.right = rcText.top = rcText.bottom = 0;
 	DrawText(tempDC, trackTimeString, lenTT, &rcText, DT_CALCRECT);
-	TextOut(tempDC,  1, CW_TRACKBAR_Y - rcText.bottom - 3, currentTimeString, strlen(currentTimeString));
+	TextOut(tempDC, 1, CW_TRACKBAR_Y - rcText.bottom - 3, currentTimeString, strlen(currentTimeString));
 
 
 	SetBkMode(tempDC, oldMode);
@@ -286,7 +283,8 @@ void Window_Manager::OnLButtonDown(HWND hwnd, LPARAM lParam)
 	if (selectedButton != NULL)
 	{
 		selectedButton->Move(ADD_ONCLICK_X, ADD_ONCLICK_Y);
-		InvalidateRect(hwnd, NULL, true);
+		InvalidateRect(hwnd, NULL, false);
+		SendMessage(hwnd, WM_PAINT, 0, 0);
 	}
 }
 
@@ -311,6 +309,7 @@ void Window_Manager::OnLButtonUp(HWND hwnd, LPARAM lParam)
 			if (bass_manager->MusicIsPlayingOrIsPaused())
 			{
 				bass_manager->StreamPlayPrevios();
+				playListPanel->SelectPrevios();
 				currentTrackTime = 0;
 				trackTime = bass_manager->GetStreamTime();
 				SendMessage(trackBar->GetHWND(), TBM_SETPOS, TRUE, (int)((currentTrackTime / trackTime) * 100));
@@ -322,7 +321,7 @@ void Window_Manager::OnLButtonUp(HWND hwnd, LPARAM lParam)
 			images[5].SetVisible(TRUE);
 
 			if (bass_manager->MusicCanPlay())
-			{				
+			{
 				hasPlayed = bass_manager->MusicHasPlayed();
 				bass_manager->StreamPlay();
 
@@ -334,12 +333,13 @@ void Window_Manager::OnLButtonUp(HWND hwnd, LPARAM lParam)
 
 				SetTimer(hwnd, TIMER_1, 1000, NULL);
 			}
-			
+
 			break;
 		case CW_NUMBER_FAST_F_BUTTON:
 			if (bass_manager->MusicIsPlayingOrIsPaused())
 			{
 				bass_manager->StreamPlayNext();
+				playListPanel->SelectNext();
 				currentTrackTime = 0;
 				trackTime = bass_manager->GetStreamTime();
 				SendMessage(trackBar->GetHWND(), TBM_SETPOS, TRUE, (int)((currentTrackTime / trackTime) * 100));
@@ -370,7 +370,8 @@ void Window_Manager::OnLButtonUp(HWND hwnd, LPARAM lParam)
 		}
 
 		selectedButton = NULL;
-		InvalidateRect(hwnd, NULL, true);
+		InvalidateRect(hwnd, NULL, false);
+		SendMessage(hwnd, WM_PAINT, 0, 0);
 	}
 }
 
@@ -405,7 +406,7 @@ void Window_Manager::OnScroll(HWND hwnd, WPARAM wParam, LPARAM lParam)
 	else if (wParam == volumeBar->GetIdentifier())
 	{
 		double percent = ((double)lParam - CW_TRACKBAR_MIN) / ((double)CW_TRACKBAR_MAX - CW_TRACKBAR_MIN);
-		
+
 		bass_manager->StreamSetVolume(percent);
 	}
 
@@ -434,4 +435,28 @@ char * Window_Manager::TimeToString(long time)
 	strTime[i + 3] = '\0';
 
 	return strTime;
+}
+
+void Window_Manager::PlayFile(HWND hwnd, int number)
+{
+	if (bass_manager->MusicHasPlayed())
+	{
+		images[2].SetVisible(FALSE);
+		images[5].SetVisible(TRUE);
+
+		KillTimer(hwnd, TIMER_1);
+		SendMessage(trackBar->GetHWND(), TBM_SETPOS, TRUE, 0);
+		currentTrackTime = 0;
+		trackTime = 0;
+
+		bass_manager->StreamStop();
+		bass_manager->SetCurrentFile(number);
+
+		bass_manager->StreamPlay();
+		currentTrackTime = 0;
+		trackTime = bass_manager->GetStreamTime();
+		SetTimer(hwnd, TIMER_1, 1000, NULL);
+	}
+
+
 }

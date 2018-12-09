@@ -96,7 +96,8 @@ BOOL Window_Menu::LButtonDown(HWND hwnd, LPARAM lParam)
 			{
 				selectedImage = &(buttons[i]);
 				buttons[i].Move(2, 3);
-				InvalidateRect(hwnd, NULL, true);
+				InvalidateRect(hwnd, NULL, false);
+				SendMessage(hwnd, WM_PAINT, 0, 0);
 				break;
 			}
 		}
@@ -110,7 +111,8 @@ BOOL Window_Menu::LButtonDown(HWND hwnd, LPARAM lParam)
 				buttons[i].SetVisible(FALSE);
 			}
 			minimezedImage->SetVisible(TRUE);
-			InvalidateRect(hwnd, NULL, true);
+			InvalidateRect(hwnd, NULL, false);
+			SendMessage(hwnd, WM_PAINT, 0, 0);
 		}
 		else if (selectedImage == NULL && point.y <= top + height)
 		{
@@ -157,7 +159,8 @@ BOOL Window_Menu::LButtonUp(HWND hwnd, LPARAM lParam)
 		}
 
 		selectedImage = NULL;
-		InvalidateRect(hwnd, NULL, true);
+		InvalidateRect(hwnd, NULL, false);
+		SendMessage(hwnd, WM_PAINT, 0, 0);
 	}
 	return result;
 }

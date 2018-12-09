@@ -1,23 +1,6 @@
-﻿  Bass_Manager.cpp
-d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_manager.cpp(130): warning C4244: аргумент: преобразование "double" в "float", возможна потеря данных
-d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_manager.cpp(271): warning C4244: инициализация: преобразование "QWORD" в "unsigned int", возможна потеря данных
-d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_manager.cpp(279): warning C4244: аргумент: преобразование "const QWORD" в "::size_t", возможна потеря данных
-d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_manager.cpp(279): warning C4244: аргумент: преобразование "QWORD" в "::size_t", возможна потеря данных
-d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_manager.cpp(299): warning C4244: аргумент: преобразование "double" в "QWORD", возможна потеря данных
-d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_manager.cpp(312): warning C4244: =: преобразование "unsigned __int64" в "unsigned int", возможна потеря данных
-d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_manager.cpp(316): warning C4244: аргумент: преобразование "double" в "QWORD", возможна потеря данных
-d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_manager.cpp(327): warning C4244: аргумент: преобразование "double" в "QWORD", возможна потеря данных
-d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_manager.cpp(341): warning C4244: аргумент: преобразование "double" в "QWORD", возможна потеря данных
-  Создание кода...
-  Компиляция...
-  Window_Manager.cpp
-d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\window_manager.cpp(19): warning C4101: point: неиспользованная локальная переменная
-d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\window_manager.cpp(232): warning C4244: аргумент: преобразование "double" в "long", возможна потеря данных
-d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\window_manager.cpp(239): warning C4244: аргумент: преобразование "double" в "long", возможна потеря данных
-d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\window_manager.cpp(383): warning C4018: <: несоответствие типов со знаком и без знака
-d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\window_manager.cpp(426): warning C4018: <: несоответствие типов со знаком и без знака
-d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\window_manager.cpp(432): warning C4244: =: преобразование "long" в "char", возможна потеря данных
-  Play_List_Panel.cpp
-  Main.cpp
-  Создание кода...
+﻿  TrackBar.cpp
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\trackbar.cpp(91): warning C4244: =: преобразование "float" в "int", возможна потеря данных
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\trackbar.cpp(134): warning C4244: =: преобразование "float" в "int", возможна потеря данных
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\trackbar.cpp(173): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\trackbar.cpp(224): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
   CW_1.vcxproj -> D:\учеба\5 семестр\Курсовая\CW_git\Music_Player\Debug\CW_1.exe

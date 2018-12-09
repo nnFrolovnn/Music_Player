@@ -5,12 +5,12 @@
 #include <iostream>
 
 #include "bass.h"
-#include "bass_cmponents\bassenc.h"
-#include "bass_cmponents\bassenc_mp3.h"
+#include "bass_cmponents\bassmod.h"
 #include "bass_cmponents\unmo3.h"
 #include "CW_Types.h"
 
 #pragma comment (lib, "bass.lib")
+#pragma comment (lib, "BASSMOD.lib")
 #pragma comment (lib, "unmo3.lib")
 
 class Bass_Manager
@@ -25,6 +25,7 @@ public:
 	void StreamPause();
 	void StreamPlayNext();
 	void StreamPlayPrevios();
+	void SetCurrentFile(int fileNumber);
 
 	//percent 0..1
 	void StreamSetPosition(double percent);
@@ -61,7 +62,7 @@ private:
 	//
 	//returns handle for manipulating stream when successed
 	//else returns 0
-	HMUSIC LoadMusicForPlaying(musicFile* fileToPlay, double percent, BOOL sameFile = FALSE);
+	HSTREAM LoadMusicForPlaying(musicFile* fileToPlay, double percent, BOOL sameFile = FALSE);
 		  
 	void StreamPlayFromPosition(double percent);
 };

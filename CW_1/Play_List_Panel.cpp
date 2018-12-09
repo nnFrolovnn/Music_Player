@@ -10,6 +10,7 @@ Play_List_Panel::Play_List_Panel(int left, int top, int width, int height, Bass_
 	state = Hidden;
 	bkState = Hidden;
 	wheeling = 0;
+	selectedMusicLine.MakeLine(0, 0, 0, 0, 0);
 	imageShow = new BitMapImage(1, left + 1, top + height / 2, CW_PLP_SHOW_IMAGE_PATH);
 }
 
@@ -39,6 +40,12 @@ void Play_List_Panel::Draw(HDC hdc)
 						rect.bottom += currentTop;
 						DrawTextA(hdc, playList[i].name, strlen(playList[i].name), &rect, DT_LEFT);
 						currentTop += rect.bottom - rect.top;
+						if (i == selectedMusicLine.number && selectedMusicLine.used)
+						{
+							selectedMusicLine.MakeLine(left, left + (rect.right > width) ? width : rect.right,
+								rect.bottom, rect.bottom, i);
+							selectedMusicLine.Draw(hdc);
+						}
 					}
 				}
 			}
@@ -73,9 +80,9 @@ BOOL Play_List_Panel::MainWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM
 		break;
 	case WM_MOUSEWHEEL:
 		wheelDelta = GET_WHEEL_DELTA_WPARAM(wParam);
-		if (wheelDelta > 0)
-			wheeling = (height < CalculateHeight(GetDC(hwnd), wheeling)) ? wheeling + 1 : wheeling;
 		if (wheelDelta < 0)
+			wheeling = (height < CalculateHeight(GetDC(hwnd), wheeling)) ? wheeling + 1 : wheeling;
+		if (wheelDelta > 0)
 			wheeling = (wheeling >= 1)? wheeling - 1: 0;
 		InvalidateRect(hwnd, NULL, false);
 		break;
@@ -87,6 +94,16 @@ BOOL Play_List_Panel::MainWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM
 void Play_List_Panel::SetShownState()
 {
 	state = Shown;
+}
+
+void Play_List_Panel::SelectNext()
+{
+	selectedMusicLine.number = ((selectedMusicLine.number + 1) % bass_manager->GetPlayListSize());
+}
+
+void Play_List_Panel::SelectPrevios()
+{
+	selectedMusicLine.number = ((selectedMusicLine.number - 1) % bass_manager->GetPlayListSize());
 }
 
 int Play_List_Panel::CalculateHeight(HDC hdc, int fromFile)
@@ -121,9 +138,43 @@ BOOL Play_List_Panel::LButtonDown(HWND hwnd, LPARAM lParam)
 	{
 		state = Hidden;
 		InvalidateRect(hwnd, NULL, false);
+		result = TRUE;
 		SendMessage(hwnd, WM_PAINT, 0, 0);
 	}
-
+	else if (state == Shown && (left + width >= point.x && point.x > left) && (top < point.y && point.y < top + height))
+	{
+		const int length = bass_manager->GetPlayListSize();
+		musicFile* list = bass_manager->GetPlayList();
+		HDC hdc = GetDC(hwnd);
+		int currTop = top;
+		int pressedFile = -1;
+		for (int i = 0; i < length; i++)
+		{
+			if (wheeling <= i + 1)
+			{
+				RECT r;
+				r.left = r.top = 0;
+				DrawTextA(hdc, playList[i].name, strlen(playList[i].name), &r, DT_CALCRECT);
+				if (currTop <= point.y && point.y <= currTop + r.bottom)
+				{
+					pressedFile = i;
+					if (bass_manager->MusicIsPlayingOrIsPaused())
+					{
+						selectedMusicLine.number = i;
+					}
+					break;
+				}
+				currTop += r.bottom;
+			}
+		}
+		if (pressedFile > -1)
+		{
+			result = TRUE;
+			InvalidateRect(hwnd, NULL, false);
+			SendMessage(hwnd, WM_PAINT, 0, 0);
+			SendMessage(hwnd, WM_PLAYFILE, pressedFile, lParam);
+		}
+	}
 
 	return result;
 }

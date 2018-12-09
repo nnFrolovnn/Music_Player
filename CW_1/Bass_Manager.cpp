@@ -38,8 +38,11 @@ void Bass_Manager::StreamPlayFromPosition(double percent)
 	{
 		if (!isPlaying && !isPause)
 		{
-			/*stream = BASS_StreamCreateFile(FALSE, playList[currentMusicFile].filePath, 
-										   playList[currentMusicFile].fileSize * percent, 0, 0);*/
+			if (stream != 0)
+			{
+				BASS_ChannelStop(stream);
+				BASS_StreamFree(stream);
+			}
 			stream = LoadMusicForPlaying(&playList[currentMusicFile], percent);
 			if (stream > 0) 
 			{
@@ -73,6 +76,7 @@ void Bass_Manager::StreamStop()
 		{
 			BASS_ChannelStop(stream);
 			BASS_StreamFree(stream);
+			stream = 0;
 		}
 		isPlaying = FALSE;
 		isPause = FALSE;
@@ -109,9 +113,14 @@ void Bass_Manager::StreamPlayPrevios()
 	}
 }
 
+void Bass_Manager::SetCurrentFile(int fileNumber)
+{
+	currentMusicFile = (fileNumber > 0 && fileNumber < musicFilesCount) ? fileNumber : currentMusicFile;
+}
+
 void Bass_Manager::StreamSetPosition(double percent)
 {
-	if (stream != 0 && percent >= 0 && percent <= 100)
+	if (stream != 0 && percent >= 0 && percent <= 1)
 	{
 		StreamStop();
 		StreamPlayFromPosition(percent);
@@ -268,39 +277,33 @@ void * Bass_Manager::LoadMusicFileToMemory(musicFile* mFile)
 		char * memoryPos = new char[len + 1];
 
 		FILE * file;
-		if (fopen_s(&file, mFile->name, "rb"))
+		if (fopen_s(&file, mFile->filePath, "rb"))
 		{
+			free(memoryPos);
 			return nullptr;
 		}
 
 		const QWORD readedBytes = fread_s(memoryPos, len * sizeof(char), sizeof(char), len, file);
 
+		fclose(file);
 		if (readedBytes == len)
 		{
 			return memoryPos;
-		}
-
-		fclose(file);
+		}	
 	}
 	return nullptr;
 }
 
-HMUSIC Bass_Manager::LoadMusicForPlaying(musicFile* fileToPlay, double percent, BOOL sameFile)
+HSTREAM Bass_Manager::LoadMusicForPlaying(musicFile* fileToPlay, double percent, BOOL sameFile)
 {
-	HMUSIC music = 0;
-	//int err = 0;
+	HSTREAM music = 0;
+
 	if (fileToPlay != NULL)
 	{
 		try
 		{
 			music = BASS_MusicLoad(FALSE, fileToPlay->filePath, percent*fileToPlay->fileSize, 0,
 				BASS_MUSIC_LOOP | BASS_MUSIC_RAMPS | BASS_MUSIC_SURROUND | BASS_UNICODE, 0);
-
-			//music = BASSMOD_MusicLoad(FALSE, fileToPlay->filePath, percent*fileToPlay->fileSize, 0,
-			//	BASS_MUSIC_LOOP | BASS_MUSIC_RAMPS | BASS_MUSIC_SURROUND | BASS_UNICODE);
-			//err = BASS_ErrorGetCode();
-
-			//it is a MO3 music or not a music file
 			if (music == 0)
 			{
 				void* fileInMemory = (void *)LoadMusicFileToMemory(fileToPlay);
@@ -310,22 +313,16 @@ HMUSIC Bass_Manager::LoadMusicForPlaying(musicFile* fileToPlay, double percent, 
 
 				if (fileInMemory != nullptr && filesize != NULL)
 				{
-					music = BASS_MusicLoad(TRUE, fileInMemory, percent*fileToPlay->fileSize, *filesize, BASS_MUSIC_LOOP | BASS_MUSIC_RAMPS | BASS_MUSIC_SURROUND | BASS_UNICODE, 0);
-					//err = BASS_ErrorGetCode();
-					//music = BASSMOD_MusicLoad(TRUE, fileInMemory, percent*fileToPlay->fileSize, *filesize,
-					//	BASS_MUSIC_LOOP | BASS_MUSIC_RAMPS | BASS_MUSIC_SURROUND | BASS_UNICODE);
-					//err = BASS_ErrorGetCode();
+					music = BASS_MusicLoad(TRUE, fileInMemory, percent*fileToPlay->fileSize, *filesize, 
+						BASS_MUSIC_LOOP | BASS_MUSIC_RAMPS | BASS_MUSIC_SURROUND | BASS_UNICODE, 0);
 
 					if (music == 0)
 					{
 						int decode = UNMO3_Decode(&fileInMemory, filesize, 0);
 						if (decode != 3)
 						{
-							music = BASS_MusicLoad(TRUE, fileInMemory, percent*fileToPlay->fileSize, *filesize, BASS_MUSIC_LOOP | BASS_MUSIC_RAMPS | BASS_MUSIC_SURROUND | BASS_UNICODE, 0);
-							//err = BASS_ErrorGetCode();
-							//music = BASSMOD_MusicLoad(TRUE, fileInMemory, percent*(*filesize), *filesize,
-							//	BASS_MUSIC_LOOP | BASS_MUSIC_RAMPS | BASS_MUSIC_SURROUND | BASS_UNICODE);
-							//err = BASS_ErrorGetCode();
+							music = BASS_MusicLoad(TRUE, fileInMemory, percent*fileToPlay->fileSize, *filesize, 
+								BASS_MUSIC_LOOP | BASS_MUSIC_RAMPS | BASS_MUSIC_SURROUND | BASS_UNICODE, 0);
 						}
 						free(fileInMemory);
 					}
@@ -335,7 +332,8 @@ HMUSIC Bass_Manager::LoadMusicForPlaying(musicFile* fileToPlay, double percent, 
 
 			if (music == 0)
 			{
-				music = BASS_StreamCreateFile(FALSE, fileToPlay->filePath, percent*fileToPlay->fileSize, BASS_MUSIC_LOOP | BASS_MUSIC_RAMPS | BASS_MUSIC_SURROUND | BASS_UNICODE, 0);
+				music = BASS_StreamCreateFile(FALSE, fileToPlay->filePath, percent*fileToPlay->fileSize, 
+					BASS_MUSIC_LOOP | BASS_MUSIC_RAMPS | BASS_MUSIC_SURROUND | BASS_UNICODE, 0);
 			}
 		}
 		catch(...)

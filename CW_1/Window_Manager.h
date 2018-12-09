@@ -50,5 +50,6 @@ private:
 	void OnDropFiles(HWND hwnd, WPARAM wParam);
 	void OnScroll(HWND hwnd, WPARAM wParam, LPARAM lParam);
 	char* TimeToString(long time);	
+	void PlayFile(HWND hwnd, int number);
 };
 
