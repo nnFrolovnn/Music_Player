@@ -15,6 +15,10 @@
 #pragma comment (lib, "ComCtl32")
 
 #define TIMER_1 1
+#define TIMER_2 2
+#define TIMER_1_TIME 1000
+#define TIMER_2_TIME 10
+
 #define IMAGES_COUNT 6
 #define ADD_ONCLICK_X 2
 #define ADD_ONCLICK_Y 3
@@ -35,10 +39,12 @@ private:
 	Window_Menu* window_menu;
 	Play_List_Panel* playListPanel;
 	
-	HBRUSH brush;
+	HBRUSH brush, secondBrush;
+	HPEN pen;
 	HINSTANCE hinstance;
 	BitMapImage * selectedButton;
 	double trackTime, currentTrackTime;
+	float* fft;
 	
 	void OnTimer(HWND hwnd, int timerID);
 	char* GetFilePath(HWND hwnd);

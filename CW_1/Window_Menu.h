@@ -24,6 +24,8 @@ public:
 	void Draw(HDC hdc);
 	BOOL MainWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	RECT GetMenuRect();
+	int GetState();
+	int GetHeight();
 
 private:
 	int left, top;

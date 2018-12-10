@@ -113,7 +113,7 @@ void TrackBar::Draw(HDC hdc)
 {
 	if (pens != NULL && width > 0)
 	{
-		int oldMode = SetBkMode(hdc, TRANSPARENT);
+		//int oldMode = SetBkMode(hdc, TRANSPARENT);
 
 		SelectObject(hdc, pens[0]);
 		MoveToEx(hdc, leftCenterPoint.x, leftCenterPoint.y - height / 2, NULL);
@@ -141,7 +141,9 @@ void TrackBar::Draw(HDC hdc)
 		{
 			sliderImage->Draw(hdc);
 		}
-		SetBkMode(hdc, oldMode);
+
+		SelectObject(hdc, CreatePen(PS_SOLID, 1, CW_PEN_COLOR));
+		//SetBkMode(hdc, oldMode);
 	}
 }
 

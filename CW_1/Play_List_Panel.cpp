@@ -8,10 +8,8 @@ Play_List_Panel::Play_List_Panel(int left, int top, int width, int height, Bass_
 	this->height = height;
 	bass_manager = bass_man;
 	state = Hidden;
-	bkState = Hidden;
 	wheeling = 0;
 	selectedMusicLine.MakeLine(0, 0, 0, 0, 0);
-	imageShow = new BitMapImage(1, left + 1, top + height / 2, CW_PLP_SHOW_IMAGE_PATH);
 }
 
 void Play_List_Panel::Draw(HDC hdc)
@@ -34,30 +32,24 @@ void Play_List_Panel::Draw(HDC hdc)
 					DrawTextA(hdc, playList[i].name, strlen(playList[i].name), &rect, DT_CALCRECT);
 					if (rect.bottom - rect.top + currentTop <= top + height)
 					{
-						rect.right = left + width;
-						rect.left = left;
 						rect.top = currentTop;
 						rect.bottom += currentTop;
-						DrawTextA(hdc, playList[i].name, strlen(playList[i].name), &rect, DT_LEFT);
-						currentTop += rect.bottom - rect.top;
+
 						if (i == selectedMusicLine.number && selectedMusicLine.used)
 						{
 							selectedMusicLine.MakeLine(left, left + (rect.right > width) ? width : rect.right,
 								rect.bottom, rect.bottom, i);
 							selectedMusicLine.Draw(hdc);
 						}
+
+						rect.right = left + width;
+						rect.left = left;
+						
+						DrawTextA(hdc, playList[i].name, strlen(playList[i].name), &rect, DT_LEFT);
+						currentTop += rect.bottom - rect.top;						
 					}
 				}
 			}
-		}
-	}
-	else if (state == Hidden)
-	{
-		imageShow->Draw(hdc);
-		if (bkState == Shown)
-		{
-			MoveToEx(hdc, left + imageShow->GetWidth(), top, NULL);
-			LineTo(hdc, left + imageShow->GetWidth(), top + height);
 		}
 	}
 }

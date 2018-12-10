@@ -45,6 +45,9 @@ public:
 	BOOL MusicCanPlay();
 	BOOL MusicIsPlayingOrIsPaused();
 
+	// return 512 elements
+	float* GetFFT();
+
 private:
 	HSTREAM stream;
 	musicFile* playList;

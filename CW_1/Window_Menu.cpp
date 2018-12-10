@@ -75,6 +75,16 @@ RECT Window_Menu::GetMenuRect()
 	return menuRect;
 }
 
+int Window_Menu::GetState()
+{
+	return state;
+}
+
+int Window_Menu::GetHeight()
+{
+	return (state == CW_WM_STATE_MINIMIZED)? minimezedImage->GetHeight() : height;
+}
+
 BOOL Window_Menu::LButtonDown(HWND hwnd, LPARAM lParam)
 {
 	BOOL result = FALSE;

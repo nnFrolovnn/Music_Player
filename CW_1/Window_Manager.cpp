@@ -11,6 +11,9 @@ Window_Manager::Window_Manager()
 	bass_manager = NULL;
 	window_menu = NULL;
 	brush = CreateSolidBrush(CW_BK_COLOR);
+	pen = CreatePen(PS_SOLID, 1, CW_PEN_COLOR);
+	secondBrush = CreateSolidBrush(CW_BK_COLOR_2);
+	fft = NULL;
 }
 
 LRESULT Window_Manager::MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -60,6 +63,7 @@ LRESULT Window_Manager::MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			break;
 		case WM_DESTROY:
 			KillTimer(hWnd, TIMER_1);
+			KillTimer(hWnd, TIMER_2);
 			PostQuitMessage(0);
 			break;
 		case WM_PAINT:
@@ -101,7 +105,7 @@ void Window_Manager::OnTimer(HWND hwnd, int timerID)
 	case TIMER_1:
 		if (trackTime > currentTrackTime)
 		{
-			currentTrackTime++;
+			currentTrackTime++;	
 			SendMessage(trackBar->GetHWND(), TBM_SETPOS, TRUE, (int)((currentTrackTime / trackTime) * 100));
 			InvalidateRect(hwnd, NULL, false);
 			SendMessage(hwnd, WM_PAINT, 0, 0);
@@ -117,6 +121,10 @@ void Window_Manager::OnTimer(HWND hwnd, int timerID)
 			InvalidateRect(hwnd, NULL, false);
 			SendMessage(hwnd, WM_PAINT, 0, 0);
 		}
+		break;
+	case TIMER_2:
+		InvalidateRect(hwnd, NULL, false);
+		SendMessage(hwnd, WM_PAINT, 0, 0);
 		break;
 	}
 }
@@ -173,8 +181,10 @@ void Window_Manager::OnCreate(HWND hwnd)
 	OffsetRect(&rect, -rect.left, -rect.top);
 
 	bass_manager = new Bass_Manager(hwnd);
-	trackBar = new TrackBar(hwnd, CW_TRACKBAR_X, CW_TRACKBAR_Y, rect.right, CW_TRACKBAR_MIN, CW_TRACKBAR_MAX, CW_TRACKBAR_IDENTIFIER);
-	volumeBar = new TrackBar(hwnd, rect.right - 80, CW_IMAGE_MENU_TOP + 25, 50, CW_TRACKBAR_MIN, CW_TRACKBAR_MAX, CW_VOLUMEBAR_IDENTIFIER);
+	trackBar = new TrackBar(hwnd, CW_TRACKBAR_X, CW_TRACKBAR_Y, rect.right, 
+		CW_TRACKBAR_MIN, CW_TRACKBAR_MAX, CW_TRACKBAR_IDENTIFIER);
+	volumeBar = new TrackBar(hwnd, rect.right - 64, CW_IMAGE_MENU_TOP + 30, 60, 
+		CW_TRACKBAR_MIN, CW_TRACKBAR_MAX, CW_VOLUMEBAR_IDENTIFIER);
 
 	window_menu = new Window_Menu(0, 0, rect.right, 40);
 
@@ -196,6 +206,7 @@ void Window_Manager::OnPaint(HWND hwnd, LPARAM lParam)
 	PAINTSTRUCT ps;
 	HDC hdc = BeginPaint(hwnd, &ps);
 	HDC tempDC = CreateCompatibleDC(hdc);
+
 	// get window size
 	RECT rect;
 	rect.left = rect.right = rect.top = rect.bottom = 0;
@@ -205,7 +216,9 @@ void Window_Manager::OnPaint(HWND hwnd, LPARAM lParam)
 	// set region to draw
 	HBITMAP tempBitMap = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
 	SelectObject(tempDC, tempBitMap);
-	FillRect(tempDC, &rect, brush);
+	SelectObject(tempDC, pen);
+	SetTextColor(tempDC, CW_PEN_COLOR_2);
+	FillRect(tempDC, &rect, secondBrush);
 
 	int oldMode = SetBkMode(tempDC, TRANSPARENT);
 
@@ -215,6 +228,27 @@ void Window_Manager::OnPaint(HWND hwnd, LPARAM lParam)
 		images[i].Draw(tempDC);
 	}
 
+	RECT centerRect = rect;
+	centerRect.top = (window_menu->GetState() == CW_WM_STATE_MINIMIZED) ? 20 : 40;
+	centerRect.bottom = CW_TRACKBAR_Y + CW_TRACKBAR_HEIGHT - 3;
+	FillRect(tempDC, &centerRect, brush);
+
+	fft = bass_manager->GetFFT();
+	if (fft != NULL)
+	{
+		int x = 0;
+		int y = CW_TRACKBAR_Y, y2;
+		int len = ((rect.right > 512) ? 512 : rect.right)/3;
+		int menuHeight = window_menu->GetHeight();
+		for (int i = 0; i < len; i++)
+		{
+			y2 = abs(floor(fft[i*2] * 2200));
+			MoveToEx(tempDC, x, y, NULL);
+			LineTo(tempDC, x, (y - y2 < menuHeight)? menuHeight : y - y2);
+			x+=3;
+		}
+		fft = NULL;
+	}
 	// draw bars
 	trackBar->Draw(tempDC);
 	volumeBar->Draw(tempDC);
@@ -231,14 +265,15 @@ void Window_Manager::OnPaint(HWND hwnd, LPARAM lParam)
 	RECT rcText;
 	rcText.left = rcText.right = rcText.top = rcText.bottom = 0;
 	DrawText(tempDC, trackTimeString, lenTT, &rcText, DT_CALCRECT);
-	TextOut(tempDC, rect.right - rcText.right - 1, CW_TRACKBAR_Y - rcText.bottom - 3, trackTimeString, lenTT);
+	TextOut(tempDC, rect.right - rcText.right - 1, CW_TRACKBAR_Y + CW_TRACKBAR_HEIGHT - 2, trackTimeString, lenTT);
 
 	char * currentTimeString = TimeToString(currentTrackTime);
 	lenTT = strlen(currentTimeString);
-	rcText.left = rcText.right = rcText.top = rcText.bottom = 0;
-	DrawText(tempDC, trackTimeString, lenTT, &rcText, DT_CALCRECT);
-	TextOut(tempDC, 1, CW_TRACKBAR_Y - rcText.bottom - 3, currentTimeString, strlen(currentTimeString));
-
+	rcText.left = rect.right - rcText.right - 1;
+	rcText.right = rcText.top = rcText.bottom = 0;
+	DrawText(tempDC, currentTimeString, lenTT, &rcText, DT_CALCRECT);
+	TextOut(tempDC, rcText.left - (rcText.right - rcText.left) - 8, 
+		CW_TRACKBAR_Y + CW_TRACKBAR_HEIGHT - 2, currentTimeString, lenTT);
 
 	SetBkMode(tempDC, oldMode);
 
@@ -313,7 +348,8 @@ void Window_Manager::OnLButtonUp(HWND hwnd, LPARAM lParam)
 				currentTrackTime = 0;
 				trackTime = bass_manager->GetStreamTime();
 				SendMessage(trackBar->GetHWND(), TBM_SETPOS, TRUE, (int)((currentTrackTime / trackTime) * 100));
-				SetTimer(hwnd, TIMER_1, 1000, NULL);
+				SetTimer(hwnd, TIMER_1, TIMER_1_TIME, NULL);
+				SetTimer(hwnd, TIMER_2, TIMER_2_TIME, NULL);
 			}
 			break;
 		case CW_NUMBER_PLAY_BUTTON:
@@ -331,7 +367,8 @@ void Window_Manager::OnLButtonUp(HWND hwnd, LPARAM lParam)
 					trackTime = bass_manager->GetStreamTime();
 				}
 
-				SetTimer(hwnd, TIMER_1, 1000, NULL);
+				SetTimer(hwnd, TIMER_1, TIMER_1_TIME, NULL);
+				SetTimer(hwnd, TIMER_2, TIMER_2_TIME, NULL);
 			}
 
 			break;
@@ -343,13 +380,15 @@ void Window_Manager::OnLButtonUp(HWND hwnd, LPARAM lParam)
 				currentTrackTime = 0;
 				trackTime = bass_manager->GetStreamTime();
 				SendMessage(trackBar->GetHWND(), TBM_SETPOS, TRUE, (int)((currentTrackTime / trackTime) * 100));
-				SetTimer(hwnd, TIMER_1, 1000, NULL);
+				SetTimer(hwnd, TIMER_1, TIMER_1_TIME, NULL);
+				SetTimer(hwnd, TIMER_2, TIMER_2_TIME, NULL);
 			}
 			break;
 		case CW_NUMBER_STOP_BUTTON:
 			if (bass_manager->MusicHasPlayed())
 			{
 				KillTimer(hwnd, TIMER_1);
+				KillTimer(hwnd, TIMER_2);
 				SendMessage(trackBar->GetHWND(), TBM_SETPOS, TRUE, 0);
 				currentTrackTime = 0;
 				trackTime = 0;
@@ -362,6 +401,7 @@ void Window_Manager::OnLButtonUp(HWND hwnd, LPARAM lParam)
 			if (bass_manager->MusicHasPlayed())
 			{
 				KillTimer(hwnd, TIMER_1);
+				KillTimer(hwnd, TIMER_2);
 				bass_manager->StreamPlay();
 			}
 			selectedButton->SetVisible(FALSE);
@@ -412,7 +452,7 @@ void Window_Manager::OnScroll(HWND hwnd, WPARAM wParam, LPARAM lParam)
 
 }
 
-char * Window_Manager::TimeToString(long time)
+char* Window_Manager::TimeToString(long time)
 {
 	long minutes = time / 60;
 	long seconds = time % 60;
@@ -445,6 +485,7 @@ void Window_Manager::PlayFile(HWND hwnd, int number)
 		images[5].SetVisible(TRUE);
 
 		KillTimer(hwnd, TIMER_1);
+		KillTimer(hwnd, TIMER_2);
 		SendMessage(trackBar->GetHWND(), TBM_SETPOS, TRUE, 0);
 		currentTrackTime = 0;
 		trackTime = 0;
@@ -455,7 +496,8 @@ void Window_Manager::PlayFile(HWND hwnd, int number)
 		bass_manager->StreamPlay();
 		currentTrackTime = 0;
 		trackTime = bass_manager->GetStreamTime();
-		SetTimer(hwnd, TIMER_1, 1000, NULL);
+		SetTimer(hwnd, TIMER_1, TIMER_1_TIME, NULL);
+		SetTimer(hwnd, TIMER_2, TIMER_2_TIME, NULL);
 	}
 
 

@@ -11,7 +11,7 @@ LRESULT CALLBACK MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 void RegWNDClassEX(HINSTANCE hInstance)
 {
-	HBRUSH brush = CreateSolidBrush(CW_BK_COLOR);
+	HBRUSH brush = CreateSolidBrush(CW_BK_COLOR_2);
 	WNDCLASSEX wcex;
 	memset(&wcex, 0, sizeof(WNDCLASSEX));
 	wcex.cbSize = sizeof(WNDCLASSEX);

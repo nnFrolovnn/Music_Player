@@ -269,6 +269,18 @@ BOOL Bass_Manager::MusicIsPlayingOrIsPaused()
 	return (isPause || isPlaying);
 }
 
+float* Bass_Manager::GetFFT()
+{
+	if (stream != NULL)
+	{
+		float fft[512];
+		int count = BASS_ChannelGetData(stream, fft, BASS_DATA_FFT1024);
+		return fft;
+	}
+
+	return NULL;
+}
+
 void * Bass_Manager::LoadMusicFileToMemory(musicFile* mFile)
 {
 	if (mFile != NULL)
