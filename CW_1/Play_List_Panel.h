@@ -12,7 +12,7 @@ public:
 	void Draw(HDC hdc);
 	BOOL MainWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-	void SetShownState();
+	void SetNextState();
 	void SelectNext();
 	void SelectPrevios();
 

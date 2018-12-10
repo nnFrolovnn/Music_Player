@@ -30,7 +30,7 @@ Window_Menu::Window_Menu(int left, int top, int width, int height)
 
 void Window_Menu::Draw(HDC hdc)
 {
-	if (state == CW_WM_STATE_MAXIMIZED)
+	if (state == CW_WM_STATE_MAXIMIZED || state == CW_WM_STATE_MOVE_WINDOW)
 	{
 		for (int i = 0; i < CW_WM_IMAGES_COUNT; i++)
 		{

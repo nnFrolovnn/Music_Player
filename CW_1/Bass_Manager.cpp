@@ -43,6 +43,10 @@ void Bass_Manager::StreamPlayFromPosition(double percent)
 				BASS_ChannelStop(stream);
 				BASS_StreamFree(stream);
 			}
+			if (percent <= 0.01)
+			{
+				percent = 0;
+			}
 			stream = LoadMusicForPlaying(&playList[currentMusicFile], percent);
 			if (stream > 0) 
 			{
@@ -314,7 +318,7 @@ HSTREAM Bass_Manager::LoadMusicForPlaying(musicFile* fileToPlay, double percent,
 	{
 		try
 		{
-			music = BASS_MusicLoad(FALSE, fileToPlay->filePath, percent*fileToPlay->fileSize, 0,
+			music = BASS_MusicLoad(FALSE, fileToPlay->filePath, (QWORD)(percent*fileToPlay->fileSize), 0,
 				BASS_MUSIC_LOOP | BASS_MUSIC_RAMPS | BASS_MUSIC_SURROUND | BASS_UNICODE, 0);
 			if (music == 0)
 			{
@@ -325,7 +329,7 @@ HSTREAM Bass_Manager::LoadMusicForPlaying(musicFile* fileToPlay, double percent,
 
 				if (fileInMemory != nullptr && filesize != NULL)
 				{
-					music = BASS_MusicLoad(TRUE, fileInMemory, percent*fileToPlay->fileSize, *filesize, 
+					music = BASS_MusicLoad(TRUE, fileInMemory, (QWORD)(percent*fileToPlay->fileSize), *filesize,
 						BASS_MUSIC_LOOP | BASS_MUSIC_RAMPS | BASS_MUSIC_SURROUND | BASS_UNICODE, 0);
 
 					if (music == 0)
@@ -333,7 +337,7 @@ HSTREAM Bass_Manager::LoadMusicForPlaying(musicFile* fileToPlay, double percent,
 						int decode = UNMO3_Decode(&fileInMemory, filesize, 0);
 						if (decode != 3)
 						{
-							music = BASS_MusicLoad(TRUE, fileInMemory, percent*fileToPlay->fileSize, *filesize, 
+							music = BASS_MusicLoad(TRUE, fileInMemory, (QWORD)(percent*fileToPlay->fileSize), *filesize,
 								BASS_MUSIC_LOOP | BASS_MUSIC_RAMPS | BASS_MUSIC_SURROUND | BASS_UNICODE, 0);
 						}
 						free(fileInMemory);
@@ -344,7 +348,7 @@ HSTREAM Bass_Manager::LoadMusicForPlaying(musicFile* fileToPlay, double percent,
 
 			if (music == 0)
 			{
-				music = BASS_StreamCreateFile(FALSE, fileToPlay->filePath, percent*fileToPlay->fileSize, 
+				music = BASS_StreamCreateFile(FALSE, fileToPlay->filePath, (QWORD)(percent*fileToPlay->fileSize), 
 					BASS_MUSIC_LOOP | BASS_MUSIC_RAMPS | BASS_MUSIC_SURROUND | BASS_UNICODE, 0);
 			}
 		}

@@ -48,8 +48,6 @@ LRESULT Window_Manager::MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 		switch (uMsg)
 		{
 		case WM_CREATE:
-			//SetWindowLong(hWnd, GWL_EXSTYLE, 0x80000);
-			//SetLayeredWindowAttributes(hWnd, 0, (255 * 70) / 100, LWA_ALPHA);
 			OnCreate(hWnd);
 			break;
 		case WM_RBUTTONDOWN:
@@ -77,6 +75,12 @@ LRESULT Window_Manager::MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			break;
 		case WM_HSCROLL:
 			OnScroll(hWnd, wParam, lParam);
+			break;
+		case WM_KEYDOWN:
+			if (wParam == 13)
+			{
+				UpdateWindow(hWnd);
+			}
 			break;
 		case WM_PLAYFILE:
 			PlayFile(hWnd, wParam);
@@ -188,7 +192,7 @@ void Window_Manager::OnCreate(HWND hwnd)
 
 	window_menu = new Window_Menu(0, 0, rect.right, 40);
 
-	playListPanel = new Play_List_Panel(0, 40, 170, CW_TRACKBAR_Y - 57, bass_manager);
+	playListPanel = new Play_List_Panel(0, 40, rect.right, CW_TRACKBAR_Y - 57, bass_manager);
 
 	images = new BitMapImage[IMAGES_COUNT];
 	images[0] = BitMapImage(CW_NUMBER_PLAY_LIST_BUTTON, 5, CW_IMAGE_MENU_TOP, CW_IMAGE_PLAYLIST_PATH);
@@ -215,6 +219,7 @@ void Window_Manager::OnPaint(HWND hwnd, LPARAM lParam)
 
 	// set region to draw
 	HBITMAP tempBitMap = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
+
 	SelectObject(tempDC, tempBitMap);
 	SelectObject(tempDC, pen);
 	SetTextColor(tempDC, CW_PEN_COLOR_2);
@@ -228,16 +233,18 @@ void Window_Manager::OnPaint(HWND hwnd, LPARAM lParam)
 		images[i].Draw(tempDC);
 	}
 
+	// fill bottom rect
 	RECT centerRect = rect;
-	centerRect.top = (window_menu->GetState() == CW_WM_STATE_MINIMIZED) ? 20 : 40;
+	centerRect.top = window_menu->GetHeight();
 	centerRect.bottom = CW_TRACKBAR_Y + CW_TRACKBAR_HEIGHT - 3;
 	FillRect(tempDC, &centerRect, brush);
 
+	// draw visual lines
 	fft = bass_manager->GetFFT();
 	if (fft != NULL)
 	{
 		int x = 0;
-		int y = CW_TRACKBAR_Y, y2;
+		int y = CW_TRACKBAR_Y - 4, y2;
 		int len = ((rect.right > 512) ? 512 : rect.right)/3;
 		int menuHeight = window_menu->GetHeight();
 		for (int i = 0; i < len; i++)
@@ -249,6 +256,9 @@ void Window_Manager::OnPaint(HWND hwnd, LPARAM lParam)
 		}
 		fft = NULL;
 	}
+
+	SelectObject(tempDC, pen);
+	
 	// draw bars
 	trackBar->Draw(tempDC);
 	volumeBar->Draw(tempDC);
@@ -267,6 +277,7 @@ void Window_Manager::OnPaint(HWND hwnd, LPARAM lParam)
 	DrawText(tempDC, trackTimeString, lenTT, &rcText, DT_CALCRECT);
 	TextOut(tempDC, rect.right - rcText.right - 1, CW_TRACKBAR_Y + CW_TRACKBAR_HEIGHT - 2, trackTimeString, lenTT);
 
+	// draw current time
 	char * currentTimeString = TimeToString(currentTrackTime);
 	lenTT = strlen(currentTimeString);
 	rcText.left = rect.right - rcText.right - 1;
@@ -274,6 +285,7 @@ void Window_Manager::OnPaint(HWND hwnd, LPARAM lParam)
 	DrawText(tempDC, currentTimeString, lenTT, &rcText, DT_CALCRECT);
 	TextOut(tempDC, rcText.left - (rcText.right - rcText.left) - 8, 
 		CW_TRACKBAR_Y + CW_TRACKBAR_HEIGHT - 2, currentTimeString, lenTT);
+
 
 	SetBkMode(tempDC, oldMode);
 
@@ -337,7 +349,8 @@ void Window_Manager::OnLButtonUp(HWND hwnd, LPARAM lParam)
 		switch (selectedButton->GetNumber())
 		{
 		case CW_NUMBER_PLAY_LIST_BUTTON:
-			playListPanel->SetShownState();
+			playListPanel->SetNextState();
+			InvalidateRect(hwnd, NULL, false);
 			SendMessage(hwnd, WM_PAINT, 0, 0);
 			break;
 		case CW_NUMBER_REWIND_BUTTON:

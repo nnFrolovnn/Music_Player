@@ -83,9 +83,16 @@ BOOL Play_List_Panel::MainWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM
 	return result;
 }
 
-void Play_List_Panel::SetShownState()
+void Play_List_Panel::SetNextState()
 {
-	state = Shown;
+	if (state == Shown)
+	{
+		state = Hidden;
+	}
+	else
+	{
+		state = Shown;
+	}
 }
 
 void Play_List_Panel::SelectNext()
@@ -126,14 +133,7 @@ BOOL Play_List_Panel::LButtonDown(HWND hwnd, LPARAM lParam)
 	point.x = LOWORD(lParam);
 	point.y = HIWORD(lParam);
 
-	if (state == Shown && (!(left + width >= point.x && point.x > left) && (top < point.y && point.y < top + height)))
-	{
-		state = Hidden;
-		InvalidateRect(hwnd, NULL, false);
-		result = TRUE;
-		SendMessage(hwnd, WM_PAINT, 0, 0);
-	}
-	else if (state == Shown && (left + width >= point.x && point.x > left) && (top < point.y && point.y < top + height))
+	if (state == Shown && (left + width >= point.x && point.x > left) && (top < point.y && point.y < top + height))
 	{
 		const int length = bass_manager->GetPlayListSize();
 		musicFile* list = bass_manager->GetPlayList();

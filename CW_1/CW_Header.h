@@ -22,11 +22,11 @@
 
 #define CW_IMAGE_MENU_TOP CW_TRACKBAR_Y+CW_TRACKBAR_HEIGHT
 #define CW_IMAGE_PLAY_PATH "resources//play.bmp"
-#define CW_IMAGE_FORWARD_PATH "recources//ff.bmp"
-#define CW_IMAGE_REWIND_PATH "recources//rewind.bmp"
+#define CW_IMAGE_FORWARD_PATH "resources//ff.bmp"
+#define CW_IMAGE_REWIND_PATH "resources//rewind.bmp"
 #define CW_IMAGE_PAUSE_PATH "resources//pause.bmp"
-#define CW_IMAGE_STOP_PATH "recources//stop.bmp"
-#define CW_IMAGE_PLAYLIST_PATH "recources//playlist2.bmp"
+#define CW_IMAGE_STOP_PATH "resources//stop.bmp"
+#define CW_IMAGE_PLAYLIST_PATH "resources//playlist2.bmp"
 
 #define CW_NUMBER_PLAY_LIST_BUTTON 1
 #define CW_NUMBER_REWIND_BUTTON 2
