@@ -82,24 +82,23 @@ BOOL TrackBar::MainWindowProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		result = OnButtonUp(lParam);
 		break;
 	case CW_TBM_SETPOS:
-		if (wParam)
+		if (wParam == identifier)
 		{
+			currentState = (min <= lParam && lParam <= max) ? lParam : currentState;
+			left = leftCenterPoint.x + ((float)(currentState - min)) / ((float)max - min)*width - SLIDER_WIDTH / 2;
+			if (left < leftCenterPoint.x)
+			{
+				left = leftCenterPoint.x;
+			}
+			if (left + sliderImage->GetWidth() > leftCenterPoint.x + width)
+			{
+				left = leftCenterPoint.x + width - sliderImage->GetWidth();
+			}
+			sliderImage->SetLeft(left - 1);
+
 			SendMessage(parentHwnd, WM_PAINT, 0, PAINT_MESS_FROM_TRACKBAR);
+			result = TRUE;
 		}
-
-		currentState = (min <= lParam && lParam <= max) ? lParam : currentState;
-		left = leftCenterPoint.x + ((float)(currentState- min))/((float)max - min)*width - SLIDER_WIDTH / 2;
-		if (left < leftCenterPoint.x)
-		{
-			left = leftCenterPoint.x;
-		}
-		if (left + sliderImage->GetWidth() > leftCenterPoint.x + width)
-		{
-			left = leftCenterPoint.x + width - sliderImage->GetWidth();
-		}
-		sliderImage->SetLeft(left - 1);
-
-		result = TRUE;
 		break;
 	case WM_MOUSEMOVE:
 		OnMouseMove(lParam);
@@ -258,7 +257,7 @@ void TrackBar::OnMouseMove(LPARAM lParam)
 		if (!isSliderVisible)
 		{
 			isSliderVisible = TRUE;
-			InvalidateRect(parentHwnd, &barRect, true);
+			InvalidateRect(parentHwnd, &barRect, false);
 			SendMessage(parentHwnd, WM_PAINT, identifier, PAINT_MESS_FROM_TRACKBAR);
 		}
 		isSliderVisible = TRUE;
@@ -269,7 +268,7 @@ void TrackBar::OnMouseMove(LPARAM lParam)
 		if (isSliderVisible)
 		{
 			isSliderVisible = FALSE;
-			InvalidateRect(parentHwnd, &barRect, true);
+			InvalidateRect(parentHwnd, &barRect, false);
 			SendMessage(parentHwnd, WM_PAINT, identifier, PAINT_MESS_FROM_TRACKBAR);
 		}
 		isSliderVisible = FALSE;

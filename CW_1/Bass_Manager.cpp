@@ -29,6 +29,11 @@ Bass_Manager::~Bass_Manager()
 
 void Bass_Manager::StreamPlay()
 {
+	if (musicFilesCount == 0 && MusicIsPlayingOrIsPaused())
+	{
+		StreamStop();
+	}
+
 	StreamPlayFromPosition(0);
 }
 
@@ -99,21 +104,29 @@ void Bass_Manager::StreamPause()
 
 void Bass_Manager::StreamPlayNext()
 {
-	if (musicFilesCount > 0 && stream != 0)
+	if (musicFilesCount > 0 )
 	{
 		currentMusicFile = (currentMusicFile + 1) % musicFilesCount;
 		StreamStop();
 		StreamPlay();
 	}
+	else if (MusicIsPlayingOrIsPaused())
+	{
+		StreamStop();
+	}
 }
 
 void Bass_Manager::StreamPlayPrevios()
 {
-	if (musicFilesCount > 0 && stream != 0)
+	if (musicFilesCount > 0)
 	{
 		currentMusicFile = (currentMusicFile - 1) % musicFilesCount;
 		StreamStop();
 		StreamPlay();
+	}
+	else if(MusicIsPlayingOrIsPaused())
+	{
+		StreamStop();		
 	}
 }
 
@@ -142,6 +155,61 @@ void Bass_Manager::StreamSetVolume(double volume)
 	}
 }
 
+void Bass_Manager::RemoveFile(musicFile filetoRemove)
+{
+	if (playList != NULL)
+	{
+		musicFile* newPlayList = new musicFile[musicFilesCount - 1];
+		int j = 0;
+		BOOL removed = FALSE;
+		for (int i = 0; i < musicFilesCount; i++)
+		{
+			if (strcmp(playList[i].name, filetoRemove.name) &&
+				strcmp(playList[i].filePath, filetoRemove.filePath) &&
+				playList[i].fileSize != filetoRemove.fileSize && !removed)
+			{
+				newPlayList[j] = playList[i];
+				j++;
+			}
+			else
+			{
+				removed = TRUE;
+			}
+		}
+
+		playList = newPlayList;
+		musicFilesCount--;
+		if (musicFilesCount == 0)
+		{
+			playList = NULL;
+		}
+	}
+}
+
+void Bass_Manager::RemoveFile(int number)
+{
+	if (playList != NULL)
+	{
+		musicFile* newPlayList = new musicFile[musicFilesCount - 1];
+		int j = 0;
+		for (int i = 0; i < musicFilesCount; i++)
+		{
+			if (i != number)
+			{
+				newPlayList[j] = playList[i];
+				j++;
+			}
+		}
+
+		playList = newPlayList;
+		musicFilesCount--;
+		if (musicFilesCount == 0)
+		{
+			playList = NULL;
+		}
+	}
+}
+
 int Bass_Manager::GetLastError()
 {
 	return BASS_ErrorGetCode();
@@ -165,20 +233,13 @@ double Bass_Manager::GetStreamTime()
 	return 0;
 }
 
+double Bass_Manager::GetVolume()
+{
+	return BASS_GetVolume();
+}
+
 DWORD Bass_Manager::GetFlags()
 {
-		/*HWND h = win;
-		DWORD flags = BASS_MUSIC_POSRESET; // stop notes when seeking
-		DWORD i = MESS(21, CB_GETCURSEL, 0, 0);
-		if (!i) flags |= BASS_MUSIC_NONINTER; // no interpolation
-		i = MESS(22, CB_GETCURSEL, 0, 0);
-		if (i == 1) flags |= BASS_MUSIC_RAMP; // ramping
-		if (i == 2) flags |= BASS_MUSIC_RAMPS; // "sensitive"
-		i = MESS(23, CB_GETCURSEL, 0, 0);
-		if (i == 1) flags |= BASS_MUSIC_SURROUND; // surround
-		if (i == 2) flags |= BASS_MUSIC_SURROUND2; // "mode2"
-		return flags;
-	*/
 	return 0;
 }
 
@@ -194,31 +255,12 @@ int Bass_Manager::GetPlayListSize()
 
 BOOL Bass_Manager::AddFileNameToList(char * filePath)
 {
+	
 	if (filePath != NULL)
 	{
-		if (playList != NULL)
-		{
-			musicFile* temp = new musicFile[musicFilesCount + 1];
-			for (int i = 0; i < musicFilesCount; i++)
-			{
-				temp[i] = playList[i];
-			}
-			playList = temp;
-			musicFilesCount++;
-			temp = NULL;
-		}
-		else
-		{
-			musicFilesCount = 1;
-			playList = new musicFile[1];
-		}
-
 		const int len = strlen(filePath);
+		const char* extensions = ".mod.mp3.wav.aif.mpc.it";
 
-		playList[musicFilesCount - 1].filePath = new char[len + 1];
-		strcpy_s(playList[musicFilesCount - 1].filePath, len + 1, filePath);
-
-		//get name of file
 		int slashPos = 0;
 		int dotPos = len - 1;
 		for (int i = len - 1; i > 0; i--)
@@ -233,27 +275,60 @@ BOOL Bass_Manager::AddFileNameToList(char * filePath)
 				break;
 			}
 		}
-		char * tempName = new char[dotPos - slashPos + 2];
-		for (int i = slashPos; i < dotPos; i++)
+
+		//check extension
+		char * fileExtension = new char[len - dotPos + 1];
+		for (int i = 0; i < len - dotPos; i++)
 		{
-			tempName[i - slashPos] = filePath[i];
+			fileExtension[i] = filePath[i + dotPos];
 		}
-		tempName[dotPos - slashPos] = '\0';
-		playList[musicFilesCount - 1].name = tempName;
+		fileExtension[len - dotPos] = '\0';
 
+		if (strstr(extensions, fileExtension))
+		{
+			if (playList != NULL)
+			{
+				musicFile* temp = new musicFile[musicFilesCount + 1];
+				for (int i = 0; i < musicFilesCount; i++)
+				{
+					temp[i] = playList[i];
+				}
+				playList = temp;
+				musicFilesCount++;
+				temp = NULL;
+			}
+			else
+			{
+				musicFilesCount = 1;
+				playList = new musicFile[1];
+			}
 
-		//get file size
+			//get name of file
+			char * tempName = new char[dotPos - slashPos + 2];
+			for (int i = slashPos; i < dotPos; i++)
+			{
+				tempName[i - slashPos] = filePath[i];
+			}
+			tempName[dotPos - slashPos] = '\0';
+			playList[musicFilesCount - 1].name = tempName;
 
-		FILE* file;
-		fopen_s(&file, playList[musicFilesCount - 1].filePath, "r");
-		long int size_of_file = 0;
-		fseek(file, 0L, SEEK_END);
-		size_of_file = ftell(file);
-		fclose(file);
+			//save path
+			playList[musicFilesCount - 1].filePath = new char[len + 1];
+			strcpy_s(playList[musicFilesCount - 1].filePath, len + 1, filePath);
 
-		playList[musicFilesCount - 1].fileSize = size_of_file;
+			//get file size
 
-		return TRUE;
+			FILE* file;
+			fopen_s(&file, playList[musicFilesCount - 1].filePath, "r");
+			long int size_of_file = 0;
+			fseek(file, 0L, SEEK_END);
+			size_of_file = ftell(file);
+			fclose(file);
+
+			playList[musicFilesCount - 1].fileSize = size_of_file;
+
+			return TRUE;
+		}
 	}
 	return FALSE;
 }

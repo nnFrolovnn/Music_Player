@@ -15,6 +15,7 @@ public:
 	void SetNextState();
 	void SelectNext();
 	void SelectPrevios();
+	STATE GetState();
 
 private:
 	Bass_Manager* bass_manager;
@@ -27,6 +28,7 @@ private:
 
 	int CalculateHeight(HDC hdc, int fromFile = 0);
 	BOOL LButtonDown(HWND hwnd, LPARAM lParam);
+	BOOL RButtonDown(HWND hwnd, LPARAM lParam);
 	BOOL LButtonUp(HWND hwnd, LPARAM lParam);
 	void OnMouseMove(HWND hwnd, LPARAM lParam);
 };

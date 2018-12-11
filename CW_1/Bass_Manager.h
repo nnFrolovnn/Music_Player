@@ -32,9 +32,13 @@ public:
 	//volume  0..1
 	void StreamSetVolume(double volume);
 
+	void RemoveFile(musicFile filetoRemove);
+	void RemoveFile(int number);
+
 	int GetLastError();
 	char* GetStreamInfo();
 	double GetStreamTime();
+	double GetVolume();
 	DWORD GetFlags();
 	musicFile* GetPlayList();
 	int GetPlayListSize();

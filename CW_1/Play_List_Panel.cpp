@@ -64,6 +64,9 @@ BOOL Play_List_Panel::MainWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM
 	case WM_LBUTTONDOWN:
 		result = LButtonDown(hwnd, lParam);
 		break;
+	case WM_RBUTTONDOWN:
+		result = RButtonDown(hwnd, lParam);
+		break;
 	case WM_LBUTTONUP:
 		result = LButtonUp(hwnd, lParam);
 		break;
@@ -97,12 +100,20 @@ void Play_List_Panel::SetNextState()
 
 void Play_List_Panel::SelectNext()
 {
-	selectedMusicLine.number = ((selectedMusicLine.number + 1) % bass_manager->GetPlayListSize());
+	if (bass_manager->GetPlayListSize() != 0)
+	{
+		selectedMusicLine.number = ((selectedMusicLine.number + 1) % bass_manager->GetPlayListSize());
+	}
 }
 
 void Play_List_Panel::SelectPrevios()
 {
 	selectedMusicLine.number = ((selectedMusicLine.number - 1) % bass_manager->GetPlayListSize());
+}
+
+STATE Play_List_Panel::GetState()
+{
+	return state;
 }
 
 int Play_List_Panel::CalculateHeight(HDC hdc, int fromFile)
@@ -165,6 +176,47 @@ BOOL Play_List_Panel::LButtonDown(HWND hwnd, LPARAM lParam)
 			InvalidateRect(hwnd, NULL, false);
 			SendMessage(hwnd, WM_PAINT, 0, 0);
 			SendMessage(hwnd, WM_PLAYFILE, pressedFile, lParam);
+		}
+	}
+
+	return result;
+}
+
+BOOL Play_List_Panel::RButtonDown(HWND hwnd, LPARAM lParam)
+{
+	BOOL result = FALSE;
+	POINT point;
+	point.x = LOWORD(lParam);
+	point.y = HIWORD(lParam);
+
+	if (state == Shown && (left + width >= point.x && point.x > left) && (top < point.y && point.y < top + height))
+	{
+		const int length = bass_manager->GetPlayListSize();
+		musicFile* list = bass_manager->GetPlayList();
+		HDC hdc = GetDC(hwnd);
+		int currTop = top;
+		int pressedFile = -1;
+		for (int i = 0; i < length; i++)
+		{
+			if (wheeling <= i + 1)
+			{
+				RECT r;
+				r.left = r.top = 0;
+				DrawTextA(hdc, playList[i].name, strlen(playList[i].name), &r, DT_CALCRECT);
+				if (currTop <= point.y && point.y <= currTop + r.bottom)
+				{
+					pressedFile = i;
+					break;
+				}
+				currTop += r.bottom;
+			}
+		}
+		if (pressedFile > -1)
+		{
+			result = TRUE;
+			bass_manager->RemoveFile(pressedFile);
+			InvalidateRect(hwnd, NULL, false);
+			SendMessage(hwnd, WM_PAINT, 0, 0);
 		}
 	}
 

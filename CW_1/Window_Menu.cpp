@@ -200,7 +200,7 @@ void Window_Menu::OnMouseMove(HWND hwnd, LPARAM lParam)
 		{
 			drawBk = TRUE;
 			InvalidateRect(hwnd, NULL, false);
-			//SendMessage(hwnd, WM_PAINT, 0, 0);
+			SendMessage(hwnd, WM_PAINT, 0, 0);
 		}
 	}
 	else
@@ -209,7 +209,7 @@ void Window_Menu::OnMouseMove(HWND hwnd, LPARAM lParam)
 		{
 			drawBk = FALSE;
 			InvalidateRect(hwnd, NULL, false);
-			//SendMessage(hwnd, WM_PAINT, 0, 0);
+			SendMessage(hwnd, WM_PAINT, 0, 0);
 		}
 	}
 }

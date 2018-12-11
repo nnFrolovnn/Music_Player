@@ -109,21 +109,25 @@ void Window_Manager::OnTimer(HWND hwnd, int timerID)
 	case TIMER_1:
 		if (trackTime > currentTrackTime)
 		{
-			currentTrackTime++;	
-			SendMessage(trackBar->GetHWND(), TBM_SETPOS, TRUE, (int)((currentTrackTime / trackTime) * 100));
+			currentTrackTime++;
+			SendMessage(trackBar->GetHWND(), TBM_SETPOS, CW_TRACKBAR_IDENTIFIER, (int)((currentTrackTime / trackTime) * 100));
 			InvalidateRect(hwnd, NULL, false);
 			SendMessage(hwnd, WM_PAINT, 0, 0);
 		}
 		else
 		{
 			currentTrackTime = 0;
+			trackTime = 0;
 			bass_manager->StreamPlayNext();
-			trackTime = bass_manager->GetStreamTime();
-			SendMessage(trackBar->GetHWND(), TBM_SETPOS, TRUE, 0);
 			playListPanel->SelectNext();
+			if (bass_manager->MusicHasPlayed())
+			{
+				trackTime = bass_manager->GetStreamTime();
+				SendMessage(trackBar->GetHWND(), TBM_SETPOS, CW_TRACKBAR_IDENTIFIER, 0);		
 
-			InvalidateRect(hwnd, NULL, false);
-			SendMessage(hwnd, WM_PAINT, 0, 0);
+				InvalidateRect(hwnd, NULL, false);
+				SendMessage(hwnd, WM_PAINT, 0, 0);
+			}
 		}
 		break;
 	case TIMER_2:
@@ -185,9 +189,9 @@ void Window_Manager::OnCreate(HWND hwnd)
 	OffsetRect(&rect, -rect.left, -rect.top);
 
 	bass_manager = new Bass_Manager(hwnd);
-	trackBar = new TrackBar(hwnd, CW_TRACKBAR_X, CW_TRACKBAR_Y, rect.right, 
+	trackBar = new TrackBar(hwnd, CW_TRACKBAR_X, CW_TRACKBAR_Y, rect.right,
 		CW_TRACKBAR_MIN, CW_TRACKBAR_MAX, CW_TRACKBAR_IDENTIFIER);
-	volumeBar = new TrackBar(hwnd, rect.right - 64, CW_IMAGE_MENU_TOP + 30, 60, 
+	volumeBar = new TrackBar(hwnd, rect.right - 64, CW_IMAGE_MENU_TOP + 30, 60,
 		CW_TRACKBAR_MIN, CW_TRACKBAR_MAX, CW_VOLUMEBAR_IDENTIFIER);
 
 	window_menu = new Window_Menu(0, 0, rect.right, 40);
@@ -203,6 +207,9 @@ void Window_Manager::OnCreate(HWND hwnd)
 	images[5] = BitMapImage(CW_NUMBER_PAUSE_BUTTON, 225, CW_IMAGE_MENU_TOP, CW_IMAGE_PAUSE_PATH);
 
 	images[5].SetVisible(FALSE);
+
+	int currVolume = CW_TRACKBAR_MAX * bass_manager->GetVolume();
+	SendMessage(hwnd, CW_TBM_SETPOS, CW_VOLUMEBAR_IDENTIFIER, currVolume);
 }
 
 void Window_Manager::OnPaint(HWND hwnd, LPARAM lParam)
@@ -240,25 +247,28 @@ void Window_Manager::OnPaint(HWND hwnd, LPARAM lParam)
 	FillRect(tempDC, &centerRect, brush);
 
 	// draw visual lines
-	fft = bass_manager->GetFFT();
-	if (fft != NULL)
+	if (playListPanel->GetState() != Shown)
 	{
-		int x = 0;
-		int y = CW_TRACKBAR_Y - 4, y2;
-		int len = ((rect.right > 512) ? 512 : rect.right)/3;
-		int menuHeight = window_menu->GetHeight();
-		for (int i = 0; i < len; i++)
+		fft = bass_manager->GetFFT();
+		if (fft != NULL)
 		{
-			y2 = abs(floor(fft[i*2] * 2200));
-			MoveToEx(tempDC, x, y, NULL);
-			LineTo(tempDC, x, (y - y2 < menuHeight)? menuHeight : y - y2);
-			x+=3;
+			SelectObject(tempDC, pen);
+
+			int x = 0, y = CW_TRACKBAR_Y - 4, y2 = 0;
+			int len = ((rect.right > 512) ? 512 : rect.right) / 3;
+			int menuHeight = window_menu->GetHeight();
+			for (int i = 0; i < len; i++)
+			{
+				y2 = abs(floor(fft[i * 2] * 2200));
+				MoveToEx(tempDC, x, y, NULL);
+				LineTo(tempDC, x, (y - y2 < menuHeight) ? menuHeight : y - y2);
+				x += 3;
+			}
+			fft = NULL;
+
 		}
-		fft = NULL;
 	}
 
-	SelectObject(tempDC, pen);
-	
 	// draw bars
 	trackBar->Draw(tempDC);
 	volumeBar->Draw(tempDC);
@@ -283,7 +293,7 @@ void Window_Manager::OnPaint(HWND hwnd, LPARAM lParam)
 	rcText.left = rect.right - rcText.right - 1;
 	rcText.right = rcText.top = rcText.bottom = 0;
 	DrawText(tempDC, currentTimeString, lenTT, &rcText, DT_CALCRECT);
-	TextOut(tempDC, rcText.left - (rcText.right - rcText.left) - 8, 
+	TextOut(tempDC, rcText.left - (rcText.right - rcText.left) - 8,
 		CW_TRACKBAR_Y + CW_TRACKBAR_HEIGHT - 2, currentTimeString, lenTT);
 
 
@@ -360,7 +370,7 @@ void Window_Manager::OnLButtonUp(HWND hwnd, LPARAM lParam)
 				playListPanel->SelectPrevios();
 				currentTrackTime = 0;
 				trackTime = bass_manager->GetStreamTime();
-				SendMessage(trackBar->GetHWND(), TBM_SETPOS, TRUE, (int)((currentTrackTime / trackTime) * 100));
+				SendMessage(trackBar->GetHWND(), TBM_SETPOS, CW_TRACKBAR_IDENTIFIER, (int)((currentTrackTime / trackTime) * 100));
 				SetTimer(hwnd, TIMER_1, TIMER_1_TIME, NULL);
 				SetTimer(hwnd, TIMER_2, TIMER_2_TIME, NULL);
 			}
@@ -374,7 +384,7 @@ void Window_Manager::OnLButtonUp(HWND hwnd, LPARAM lParam)
 				hasPlayed = bass_manager->MusicHasPlayed();
 				bass_manager->StreamPlay();
 
-				if (!hasPlayed)
+				if (!hasPlayed && bass_manager->MusicIsPlayingOrIsPaused())
 				{
 					currentTrackTime = 0;
 					trackTime = bass_manager->GetStreamTime();
@@ -392,7 +402,7 @@ void Window_Manager::OnLButtonUp(HWND hwnd, LPARAM lParam)
 				playListPanel->SelectNext();
 				currentTrackTime = 0;
 				trackTime = bass_manager->GetStreamTime();
-				SendMessage(trackBar->GetHWND(), TBM_SETPOS, TRUE, (int)((currentTrackTime / trackTime) * 100));
+				SendMessage(trackBar->GetHWND(), TBM_SETPOS, CW_TRACKBAR_IDENTIFIER, (int)((currentTrackTime / trackTime) * 100));
 				SetTimer(hwnd, TIMER_1, TIMER_1_TIME, NULL);
 				SetTimer(hwnd, TIMER_2, TIMER_2_TIME, NULL);
 			}
@@ -402,7 +412,7 @@ void Window_Manager::OnLButtonUp(HWND hwnd, LPARAM lParam)
 			{
 				KillTimer(hwnd, TIMER_1);
 				KillTimer(hwnd, TIMER_2);
-				SendMessage(trackBar->GetHWND(), TBM_SETPOS, TRUE, 0);
+				SendMessage(trackBar->GetHWND(), TBM_SETPOS, CW_TRACKBAR_IDENTIFIER, 0);
 				currentTrackTime = 0;
 				trackTime = 0;
 			}
@@ -499,7 +509,7 @@ void Window_Manager::PlayFile(HWND hwnd, int number)
 
 		KillTimer(hwnd, TIMER_1);
 		KillTimer(hwnd, TIMER_2);
-		SendMessage(trackBar->GetHWND(), TBM_SETPOS, TRUE, 0);
+		SendMessage(trackBar->GetHWND(), TBM_SETPOS, CW_TRACKBAR_IDENTIFIER, 0);
 		currentTrackTime = 0;
 		trackTime = 0;
 
@@ -507,10 +517,14 @@ void Window_Manager::PlayFile(HWND hwnd, int number)
 		bass_manager->SetCurrentFile(number);
 
 		bass_manager->StreamPlay();
-		currentTrackTime = 0;
-		trackTime = bass_manager->GetStreamTime();
-		SetTimer(hwnd, TIMER_1, TIMER_1_TIME, NULL);
-		SetTimer(hwnd, TIMER_2, TIMER_2_TIME, NULL);
+
+		if (bass_manager->MusicIsPlayingOrIsPaused())
+		{
+			currentTrackTime = 0;
+			trackTime = bass_manager->GetStreamTime();
+			SetTimer(hwnd, TIMER_1, TIMER_1_TIME, NULL);
+			SetTimer(hwnd, TIMER_2, TIMER_2_TIME, NULL);
+		}
 	}
 
 
