@@ -1,4 +1,39 @@
-﻿  Bass_Manager.cpp
+﻿  Window_Manager.cpp
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_cmponents\bassmod.h(65): warning C4005: BASS_MUSIC_RAMP: изменение макроопределения
+  d:\учеба\5 семестр\курсовая\cw_git\music_player\packages\bass.2.4.12.1\build\native\include\bass.h(303): note: см. предыдущее определение "BASS_MUSIC_RAMP"
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_cmponents\bassmod.h(66): warning C4005: BASS_MUSIC_RAMPS: изменение макроопределения
+  d:\учеба\5 семестр\курсовая\cw_git\music_player\packages\bass.2.4.12.1\build\native\include\bass.h(304): note: см. предыдущее определение "BASS_MUSIC_RAMPS"
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_cmponents\bassmod.h(67): warning C4005: BASS_MUSIC_LOOP: изменение макроопределения
+  d:\учеба\5 семестр\курсовая\cw_git\music_player\packages\bass.2.4.12.1\build\native\include\bass.h(296): note: см. предыдущее определение "BASS_MUSIC_LOOP"
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_cmponents\bassmod.h(68): warning C4005: BASS_MUSIC_FT2MOD: изменение макроопределения
+  d:\учеба\5 семестр\курсовая\cw_git\music_player\packages\bass.2.4.12.1\build\native\include\bass.h(308): note: см. предыдущее определение "BASS_MUSIC_FT2MOD"
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_cmponents\bassmod.h(69): warning C4005: BASS_MUSIC_PT1MOD: изменение макроопределения
+  d:\учеба\5 семестр\курсовая\cw_git\music_player\packages\bass.2.4.12.1\build\native\include\bass.h(309): note: см. предыдущее определение "BASS_MUSIC_PT1MOD"
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_cmponents\bassmod.h(70): warning C4005: BASS_MUSIC_POSRESET: изменение макроопределения
+  d:\учеба\5 семестр\курсовая\cw_git\music_player\packages\bass.2.4.12.1\build\native\include\bass.h(312): note: см. предыдущее определение "BASS_MUSIC_POSRESET"
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_cmponents\bassmod.h(71): warning C4005: BASS_MUSIC_SURROUND: изменение макроопределения
+  d:\учеба\5 семестр\курсовая\cw_git\music_player\packages\bass.2.4.12.1\build\native\include\bass.h(305): note: см. предыдущее определение "BASS_MUSIC_SURROUND"
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_cmponents\bassmod.h(72): warning C4005: BASS_MUSIC_SURROUND2: изменение макроопределения
+  d:\учеба\5 семестр\курсовая\cw_git\music_player\packages\bass.2.4.12.1\build\native\include\bass.h(306): note: см. предыдущее определение "BASS_MUSIC_SURROUND2"
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_cmponents\bassmod.h(73): warning C4005: BASS_MUSIC_STOPBACK: изменение макроопределения
+  d:\учеба\5 семестр\курсовая\cw_git\music_player\packages\bass.2.4.12.1\build\native\include\bass.h(314): note: см. предыдущее определение "BASS_MUSIC_STOPBACK"
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_cmponents\bassmod.h(74): warning C4005: BASS_MUSIC_CALCLEN: изменение макроопределения
+  d:\учеба\5 семестр\курсовая\cw_git\music_player\packages\bass.2.4.12.1\build\native\include\bass.h(302): note: см. предыдущее определение "BASS_MUSIC_CALCLEN"
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_cmponents\bassmod.h(75): warning C4005: BASS_MUSIC_NONINTER: изменение макроопределения
+  d:\учеба\5 семестр\курсовая\cw_git\music_player\packages\bass.2.4.12.1\build\native\include\bass.h(310): note: см. предыдущее определение "BASS_MUSIC_NONINTER"
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_cmponents\bassmod.h(76): warning C4005: BASS_MUSIC_NOSAMPLE: изменение макроопределения
+  d:\учеба\5 семестр\курсовая\cw_git\music_player\packages\bass.2.4.12.1\build\native\include\bass.h(315): note: см. предыдущее определение "BASS_MUSIC_NOSAMPLE"
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_cmponents\bassmod.h(82): warning C4005: BASS_SYNC_MUSICPOS: изменение макроопределения
+  d:\учеба\5 семестр\курсовая\cw_git\music_player\packages\bass.2.4.12.1\build\native\include\bass.h(545): note: см. предыдущее определение "BASS_SYNC_MUSICPOS"
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\window_manager.cpp(22): warning C4101: point: неиспользованная локальная переменная
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\window_manager.cpp(229): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\window_manager.cpp(279): warning C4244: =: преобразование "float" в "int", возможна потеря данных
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\window_manager.cpp(300): warning C4244: аргумент: преобразование "double" в "long", возможна потеря данных
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\window_manager.cpp(308): warning C4244: аргумент: преобразование "double" в "long", возможна потеря данных
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\window_manager.cpp(462): warning C4018: <: несоответствие типов со знаком и без знака
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\window_manager.cpp(507): warning C4018: <: несоответствие типов со знаком и без знака
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\window_manager.cpp(513): warning C4244: =: преобразование "long" в "char", возможна потеря данных
+  Bass_Manager.cpp
 d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_cmponents\bassmod.h(65): warning C4005: BASS_MUSIC_RAMP: изменение макроопределения
   d:\учеба\5 семестр\курсовая\cw_git\music_player\packages\bass.2.4.12.1\build\native\include\bass.h(303): note: см. предыдущее определение "BASS_MUSIC_RAMP"
 d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_cmponents\bassmod.h(66): warning C4005: BASS_MUSIC_RAMPS: изменение макроопределения
@@ -26,9 +61,13 @@ d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_cm
 d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_cmponents\bassmod.h(82): warning C4005: BASS_SYNC_MUSICPOS: изменение макроопределения
   d:\учеба\5 семестр\курсовая\cw_git\music_player\packages\bass.2.4.12.1\build\native\include\bass.h(545): note: см. предыдущее определение "BASS_SYNC_MUSICPOS"
 d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_manager.cpp(153): warning C4244: аргумент: преобразование "double" в "float", возможна потеря данных
-d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_manager.cpp(368): warning C4244: инициализация: преобразование "QWORD" в "unsigned int", возможна потеря данных
-d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_manager.cpp(377): warning C4244: аргумент: преобразование "const QWORD" в "::size_t", возможна потеря данных
-d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_manager.cpp(377): warning C4244: аргумент: преобразование "QWORD" в "::size_t", возможна потеря данных
-d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_manager.cpp(403): warning C4244: =: преобразование "unsigned __int64" в "unsigned int", возможна потеря данных
-d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_manager.cpp(357): warning C4172: возвращение адреса локальной или временной переменной : fft
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_manager.cpp(387): warning C4244: инициализация: преобразование "QWORD" в "unsigned int", возможна потеря данных
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_manager.cpp(396): warning C4244: аргумент: преобразование "const QWORD" в "::size_t", возможна потеря данных
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_manager.cpp(396): warning C4244: аргумент: преобразование "QWORD" в "::size_t", возможна потеря данных
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_manager.cpp(422): warning C4244: =: преобразование "unsigned __int64" в "unsigned int", возможна потеря данных
+  Создание кода...
+d:\учеба\5 семестр\курсовая\cw_git\music_player\cw_1\bass_manager.cpp(376): warning C4172: возвращение адреса локальной или временной переменной : fft
+  Пропуск... (изменения не обнаружены)
+  Play_List_Panel.cpp
+  Main.cpp
   CW_1.vcxproj -> D:\учеба\5 семестр\Курсовая\CW_git\Music_Player\Debug\CW_1.exe

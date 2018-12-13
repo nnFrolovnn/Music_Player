@@ -20,6 +20,7 @@ void Play_List_Panel::Draw(HDC hdc)
 		playList = bass_manager->GetPlayList();
 		if (length > 0 && playList != NULL)
 		{
+			selectedMusicLine.number = bass_manager->GetCurrentPlayingFile();
 			int currentTop = top;
 			BOOL wheelingDisabled = (height >= CalculateHeight(hdc)) ? TRUE : FALSE;
 			for (int i = 0; i < length; i++)
@@ -102,7 +103,7 @@ void Play_List_Panel::SelectNext()
 {
 	if (bass_manager->GetPlayListSize() != 0)
 	{
-		selectedMusicLine.number = ((selectedMusicLine.number + 1) % bass_manager->GetPlayListSize());
+		selectedMusicLine.number = bass_manager->GetCurrentPlayingFile();
 	}
 }
 
@@ -148,7 +149,7 @@ BOOL Play_List_Panel::LButtonDown(HWND hwnd, LPARAM lParam)
 	{
 		const int length = bass_manager->GetPlayListSize();
 		musicFile* list = bass_manager->GetPlayList();
-		HDC hdc = GetDC(hwnd);
+		static HDC hdc = GetDC(hwnd);
 		int currTop = top;
 		int pressedFile = -1;
 		for (int i = 0; i < length; i++)
@@ -170,6 +171,7 @@ BOOL Play_List_Panel::LButtonDown(HWND hwnd, LPARAM lParam)
 				currTop += r.bottom;
 			}
 		}
+
 		if (pressedFile > -1)
 		{
 			result = TRUE;
@@ -193,7 +195,7 @@ BOOL Play_List_Panel::RButtonDown(HWND hwnd, LPARAM lParam)
 	{
 		const int length = bass_manager->GetPlayListSize();
 		musicFile* list = bass_manager->GetPlayList();
-		HDC hdc = GetDC(hwnd);
+		static HDC hdc = GetDC(hwnd);
 		int currTop = top;
 		int pressedFile = -1;
 		for (int i = 0; i < length; i++)

@@ -40,6 +40,7 @@ public:
 	double GetStreamTime();
 	double GetVolume();
 	DWORD GetFlags();
+	int GetCurrentPlayingFile();
 	musicFile* GetPlayList();
 	int GetPlayListSize();
 
@@ -47,6 +48,7 @@ public:
 
 	BOOL MusicHasPlayed();
 	BOOL MusicCanPlay();
+	BOOL MusicIsPlaying();
 	BOOL MusicIsPlayingOrIsPaused();
 
 	// return 512 elements

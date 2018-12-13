@@ -79,7 +79,8 @@ LRESULT Window_Manager::MainWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 		case WM_KEYDOWN:
 			if (wParam == 13)
 			{
-				UpdateWindow(hWnd);
+				InvalidateRect(hWnd, NULL, false);
+				SendMessage(hWnd, WM_PAINT, 0, 0);
 			}
 			break;
 		case WM_PLAYFILE:
@@ -127,6 +128,23 @@ void Window_Manager::OnTimer(HWND hwnd, int timerID)
 
 				InvalidateRect(hwnd, NULL, false);
 				SendMessage(hwnd, WM_PAINT, 0, 0);
+			}
+			else
+			{
+				KillTimer(hwnd, TIMER_1);
+				KillTimer(hwnd, TIMER_2);
+				if (MessageBoxA(NULL, TEXT("This file can't be read!\n Delete this file?\n(if no you will leave the player)"), TEXT("Dialog"), MB_YESNO) == IDYES)
+				{
+					bass_manager->RemoveFile(bass_manager->GetCurrentPlayingFile());
+
+					InvalidateRect(hwnd, NULL, false);
+					SendMessage(hwnd, WM_PAINT, 0, 0);
+				}
+				else
+				{
+					DestroyWindow(hwnd);
+				}
+				
 			}
 		}
 		break;
@@ -214,9 +232,8 @@ void Window_Manager::OnCreate(HWND hwnd)
 
 void Window_Manager::OnPaint(HWND hwnd, LPARAM lParam)
 {
-	PAINTSTRUCT ps;
-	HDC hdc = BeginPaint(hwnd, &ps);
-	HDC tempDC = CreateCompatibleDC(hdc);
+	static HDC hdc = GetDC(hwnd);
+	static HDC tempDC = CreateCompatibleDC(hdc);
 
 	// get window size
 	RECT rect;
@@ -296,19 +313,17 @@ void Window_Manager::OnPaint(HWND hwnd, LPARAM lParam)
 	TextOut(tempDC, rcText.left - (rcText.right - rcText.left) - 8,
 		CW_TRACKBAR_Y + CW_TRACKBAR_HEIGHT - 2, currentTimeString, lenTT);
 
-
 	SetBkMode(tempDC, oldMode);
 
 	// load drawn region
 	BitBlt(hdc, 0, 0, rect.right, rect.bottom, tempDC, 0, 0, SRCCOPY);
 
 	ValidateRect(hwnd, NULL);
-	EndPaint(hwnd, &ps);
 
 	// free resourses
 	DeleteObject(tempBitMap);
-	DeleteDC(tempDC);
-	DeleteDC(hdc);
+	//DeleteDC(tempDC);
+	//DeleteDC(hdc);
 }
 
 void Window_Manager::OnLButtonDown(HWND hwnd, LPARAM lParam)
@@ -451,19 +466,21 @@ void Window_Manager::OnDropFiles(HWND hwnd, WPARAM wParam)
 	}
 
 	DragFinish(hDrop);
+	InvalidateRect(hwnd, NULL, false);
+	SendMessage(hwnd, WM_PAINT, 0, 0);
 }
 
 void Window_Manager::OnScroll(HWND hwnd, WPARAM wParam, LPARAM lParam)
 {
 	if (wParam == trackBar->GetIdentifier())
 	{
-		// find position in file to play
-		double percent = ((double)lParam - CW_TRACKBAR_MIN) / ((double)CW_TRACKBAR_MAX - CW_TRACKBAR_MIN);
-		currentTrackTime = percent * trackTime;
-
-		if (bass_manager->MusicIsPlayingOrIsPaused())
+		if (bass_manager->MusicIsPlaying())
 		{
-			bass_manager->StreamSetPosition(percent);
+			// find position in file to play
+			double percent = ((double)lParam - CW_TRACKBAR_MIN) / ((double)CW_TRACKBAR_MAX - CW_TRACKBAR_MIN);
+			currentTrackTime = percent * trackTime;
+
+			bass_manager->StreamSetPosition(percent);		
 		}
 	}
 	else if (wParam == volumeBar->GetIdentifier())

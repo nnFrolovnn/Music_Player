@@ -17,7 +17,7 @@
 #define TIMER_1 1
 #define TIMER_2 2
 #define TIMER_1_TIME 1000
-#define TIMER_2_TIME 10
+#define TIMER_2_TIME 20
 
 #define IMAGES_COUNT 6
 #define ADD_ONCLICK_X 2

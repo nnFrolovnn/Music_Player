@@ -120,7 +120,7 @@ void Bass_Manager::StreamPlayPrevios()
 {
 	if (musicFilesCount > 0)
 	{
-		currentMusicFile = (currentMusicFile - 1) % musicFilesCount;
+		currentMusicFile = (currentMusicFile - 1 + musicFilesCount) % musicFilesCount;
 		StreamStop();
 		StreamPlay();
 	}
@@ -200,12 +200,21 @@ void Bass_Manager::RemoveFile(int number)
 				j++;
 			}
 		}
-
+		
 		playList = newPlayList;
 		musicFilesCount--;
+
 		if (musicFilesCount == 0)
 		{
 			playList = NULL;
+			currentMusicFile = 0;
+		}
+		else
+		{
+			if (currentMusicFile > number)
+			{
+				currentMusicFile = (currentMusicFile - 1) % musicFilesCount;
+			}
 		}
 	}
 }
@@ -241,6 +250,11 @@ double Bass_Manager::GetVolume()
 DWORD Bass_Manager::GetFlags()
 {
 	return 0;
+}
+
+int Bass_Manager::GetCurrentPlayingFile()
+{
+	return currentMusicFile;
 }
 
 musicFile * Bass_Manager::GetPlayList()
@@ -341,6 +355,11 @@ BOOL Bass_Manager::MusicHasPlayed()
 BOOL Bass_Manager::MusicCanPlay()
 {
 	return (playList != NULL) ? TRUE : FALSE;
+}
+
+BOOL Bass_Manager::MusicIsPlaying()
+{
+	return isPlaying;
 }
 
 BOOL Bass_Manager::MusicIsPlayingOrIsPaused()
